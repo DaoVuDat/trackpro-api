@@ -27,3 +27,7 @@ goose-status:
 .PHONY: goose-validate
 goose-reset:
 	goose -dir=migration postgres ${DB_DSN} reset
+
+.PHONY: jet-gen
+jet-gen:
+	jet -dsn=${DB_DSN} -path=./api/model/
