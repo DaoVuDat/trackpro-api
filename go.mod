@@ -3,6 +3,7 @@ module trackpro
 go 1.21
 
 require (
+	github.com/fatih/color v1.16.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/go-jet/jet/v2 v2.10.1 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect

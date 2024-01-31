@@ -27,9 +27,10 @@ func main() {
 	// Get env variables
 	app.Config = config.LoadEnvConfigs(app.Logger, ".")
 
-	// inject other dependencies
-	r := router.SetupRouter()
+	// Setup Route
+	r := router.SetupRouter(app)
 
+	// Start Server
 	server := graceful.WithDefaults(&http.Server{
 		Addr:         fmt.Sprintf(":%d", app.Config.ServerAddressPort),
 		Handler:      r,
