@@ -1,4 +1,4 @@
-package dto
+package accountdto
 
 // This file for unmarshalling in handler
 

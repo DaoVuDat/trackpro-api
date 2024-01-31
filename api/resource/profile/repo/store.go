@@ -1,4 +1,4 @@
-package accountrepo
+package profilerepo
 
 import (
 	"database/sql"

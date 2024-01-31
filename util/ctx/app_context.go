@@ -1,6 +1,7 @@
 package ctx
 
 import (
+	"database/sql"
 	"github.com/rs/zerolog"
 	"trackpro/util/config"
 )
@@ -9,4 +10,5 @@ import (
 type Application struct {
 	Logger *zerolog.Logger
 	Config *config.EnvConfigs
+	Db     *sql.DB
 }

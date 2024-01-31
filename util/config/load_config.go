@@ -7,11 +7,15 @@ import (
 )
 
 type EnvConfigs struct {
-	ServerAddressPort int           `mapstructure:"SERVER_ADDRESS_PORT"`
-	ServerTimeoutRead time.Duration `mapstructure:"SERVER_TIMEOUT_READ"`
-	ServerTimoutWrite time.Duration `mapstructure:"SERVER_TIMEOUT_WRITE"`
-	ServerTimeoutIdle time.Duration `mapstructure:"SERVER_TIMEOUT_IDLE"`
-	DBDsn             string        `mapstructure:"DB_DSN"`
+	ServerAddressPort       int           `mapstructure:"SERVER_ADDRESS_PORT"`
+	ServerTimeoutRead       time.Duration `mapstructure:"SERVER_TIMEOUT_READ"`
+	ServerTimoutWrite       time.Duration `mapstructure:"SERVER_TIMEOUT_WRITE"`
+	ServerTimeoutIdle       time.Duration `mapstructure:"SERVER_TIMEOUT_IDLE"`
+	DBDsn                   string        `mapstructure:"DB_DSN"`
+	DBMaxConnectionLifeTime time.Duration `mapstructure:"DB_MAX_CONNECTION_LIFETIME"`
+	DBMaxConnection         int32         `mapstructure:"DB_MAX_CONNECTION"`
+	DBMinConnection         int32         `mapstructure:"DB_MIN_CONNECTION"`
+	DBMaxConnectionIdleTime time.Duration `mapstructure:"DB_MAX_CONNECTION_IDLE_TIME"`
 }
 
 func LoadEnvConfigs(logger *zerolog.Logger, path string) *EnvConfigs {

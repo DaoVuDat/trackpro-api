@@ -1,8 +1,11 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/ory/graceful"
 	"net/http"
 	"trackpro/api/router"
@@ -22,10 +25,30 @@ func main() {
 	// Create application context
 	app := &ctx.Application{
 		Logger: logger,
+		Config: config.LoadEnvConfigs(logger, "."), // Get env variables
 	}
 
-	// Get env variables
-	app.Config = config.LoadEnvConfigs(app.Logger, ".")
+	// Setup DB
+	cfg, err := pgxpool.ParseConfig(app.Config.DBDsn)
+	if err != nil {
+		app.Logger.Error().Err(err)
+		panic(1)
+	}
+	cfg.MaxConns = app.Config.DBMaxConnection
+	cfg.MinConns = app.Config.DBMinConnection
+	cfg.MaxConnLifetime = app.Config.DBMaxConnectionLifeTime
+	cfg.MaxConnIdleTime = app.Config.DBMaxConnectionIdleTime
+
+	pool, err := pgxpool.NewWithConfig(context.Background(), cfg)
+	if err != nil {
+		app.Logger.Error().Err(err)
+		panic(1)
+	}
+	defer pool.Close()
+	db := stdlib.OpenDBFromPool(pool)
+	defer db.Close()
+
+	app.Db = db
 
 	// Setup Route
 	r := router.SetupRouter(app)
