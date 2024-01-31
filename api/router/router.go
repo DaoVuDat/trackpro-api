@@ -1,25 +1,25 @@
 package router
 
 import (
-	"github.com/uptrace/bunrouter"
+	"github.com/go-chi/chi/v5"
 	accounthandler "trackpro/api/resource/account/handler"
 	"trackpro/api/resource/healthcheck"
 	"trackpro/api/router/middleware"
 	"trackpro/util/ctx"
 )
 
-func SetupRouter(app *ctx.Application) *bunrouter.Router {
-	router := bunrouter.New(
-		// Install Middleware for All Routing
-		bunrouter.Use(middleware.LoggingMiddleware(app.Logger)),
-	)
-
-	accHandler := accounthandler.New(app)
+func SetupRouter(app *ctx.Application) *chi.Mux {
+	router := chi.NewRouter()
+	router.Use(middleware.LoggingMiddleware(app.Logger))
 
 	// Setup Version 1 Routing
-	router.WithGroup("/v1", func(g *bunrouter.Group) {
-		g.GET("/healthcheck", healthcheck.CheckV1)
-		g.GET("/account", accHandler.CreateAccount)
+	router.Route("/v1", func(g chi.Router) {
+		g.Get("/healthcheck", healthcheck.CheckV1)
+		g.Route("/account", func(g chi.Router) {
+			g.Get("/", accounthandler.ListAccount(app))
+			g.Post("/", accounthandler.CreateAccount(app))
+			g.Patch("/account/:id", accounthandler.UpdateAccount(app))
+		})
 	})
 
 	return router

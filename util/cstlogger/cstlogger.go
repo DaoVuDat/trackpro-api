@@ -7,13 +7,15 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 )
 
 func NewLogger(env string) *zerolog.Logger {
 	logLevel := zerolog.TraceLevel
-	var output io.Writer = zerolog.ConsoleWriter{Out: os.Stdout,
+	var output io.Writer = zerolog.ConsoleWriter{
+		Out:        os.Stdout,
 		TimeFormat: time.RFC1123Z,
 		FormatLevel: func(i interface{}) string {
 			levelText := strings.ToUpper(fmt.Sprintf("%s", i))
@@ -36,6 +38,9 @@ func NewLogger(env string) *zerolog.Logger {
 			default:
 				return color.WhiteString(levelText)
 			}
+		},
+		FormatCaller: func(i interface{}) string {
+			return filepath.Base(fmt.Sprintf("%s\t   >", i))
 		}}
 
 	if strings.Contains(env, "prod") {

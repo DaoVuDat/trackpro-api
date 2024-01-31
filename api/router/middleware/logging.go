@@ -2,22 +2,22 @@ package middleware
 
 import (
 	"github.com/rs/zerolog"
-	"github.com/uptrace/bunrouter"
 	"net/http"
 )
 
-func LoggingMiddleware(logger *zerolog.Logger) bunrouter.MiddlewareFunc {
-	return func(next bunrouter.HandlerFunc) bunrouter.HandlerFunc {
-		return func(w http.ResponseWriter, req bunrouter.Request) error {
+func LoggingMiddleware(logger *zerolog.Logger) func(http.Handler) http.Handler {
+
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 			logger.Info().
 				Str("IP", req.RemoteAddr).
 				Str("Host", req.Host).
+				Str("Protocol", req.Proto).
 				Str("URI", req.RequestURI).
 				Str("Method", req.Method).
-				Str("Protocol", req.Proto).
 				Str("UserAgent", req.UserAgent()).
 				Send()
-			return next(w, req)
-		}
+			next.ServeHTTP(w, req)
+		})
 	}
 }
