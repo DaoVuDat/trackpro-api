@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func CheckV1(w http.ResponseWriter, req *http.Request) {
+func V1Handler(w http.ResponseWriter, req *http.Request) {
 	render.JSON(w, req, map[string]interface{}{
 		"Status": "Good",
 	})

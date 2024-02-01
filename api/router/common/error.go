@@ -21,3 +21,17 @@ func InternalErrorResponse(err error) ErrorResponse {
 		Message: msgErr,
 	}
 }
+
+func NotFoundErrorResponse(err error) ErrorResponse {
+	msgErr := "api not found"
+
+	if err != nil {
+		msgErr = err.Error()
+	}
+
+	return ErrorResponse{
+		Status:  http.StatusNotFound,
+		Error:   "Not Found",
+		Message: msgErr,
+	}
+}

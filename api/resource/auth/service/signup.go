@@ -16,7 +16,10 @@ type signupService struct {
 	profileCreateRepo profilerepo.CreateProfileRepo
 }
 
-func NewSignUpService(accountCreateRepo accountrepo.CreateAccountRepo, profileCreateRepo profilerepo.CreateProfileRepo) SignUpService {
+func NewSignUpService(
+	accountCreateRepo accountrepo.CreateAccountRepo,
+	profileCreateRepo profilerepo.CreateProfileRepo,
+) SignUpService {
 	return &signupService{
 		accountCreateRepo: accountCreateRepo,
 		profileCreateRepo: profileCreateRepo,
