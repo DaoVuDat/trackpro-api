@@ -22,15 +22,19 @@ func SetupRouter(app *ctx.Application) *chi.Mux {
 	router.Route("/v1", func(g chi.Router) {
 		g.Get("/healthcheck", healthcheck.V1Handler)
 		g.Post("/signup", authhandler.SignUp(app))
+		g.Post("/login", authhandler.Login(app))
 
 		// Protected Routes
 		g.Group(func(g chi.Router) {
 			//g.Use(jwtauth.Verifier(app.JwtToken))
 			//g.Use(jwtauth.Authenticator(app.JwtToken))
 			g.Route("/account", func(g chi.Router) {
-				g.Get("/", accounthandler.ListAccount(app))
-				g.Post("/", accounthandler.CreateAccount(app))
-				g.Patch("/:id", accounthandler.UpdateAccount(app))
+				g.Group(func(g chi.Router) {
+					g.Use(middleware.IsAdminMiddleware(app.Logger))
+					g.Get("/", accounthandler.ListAccount(app))
+				})
+				g.Get("/{id}", accounthandler.UpdateAccount(app))
+				g.Patch("/{id}", accounthandler.UpdateAccount(app))
 			})
 		})
 	})

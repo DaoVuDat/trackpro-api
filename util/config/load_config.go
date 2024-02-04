@@ -16,12 +16,16 @@ type EnvConfigs struct {
 	DBMaxConnection         int32         `mapstructure:"DB_MAX_CONNECTION"`
 	DBMinConnection         int32         `mapstructure:"DB_MIN_CONNECTION"`
 	DBMaxConnectionIdleTime time.Duration `mapstructure:"DB_MAX_CONNECTION_IDLE_TIME"`
-	JWTSecretKey            string        `mapstructure:"JWT_SECRET"`
-	CookieSecretKey         string        `mapstructure:"COOKIE_SECRET"`
-	AccessTokenExpiredIn    time.Duration `mapstructure:"ACCESS_TOKEN_EXPIRED_IN"`
-	AccessTokenMaxAge       time.Duration `mapstructure:"ACCESS_TOKEN_MAXAGE"`
-	RefreshTokenExpiredIn   time.Duration `mapstructure:"REFRESH_TOKEN_EXPIRED_IN"`
-	RefreshTokenMaxAge      time.Duration `mapstructure:"REFRESH_TOKEN_MAXAGE"`
+
+	AccessTokenPrivateKey string        `mapstructure:"ACCESS_TOKEN_PRIVATE_KEY"`
+	AccessTokenPublicKey  string        `mapstructure:"ACCESS_TOKEN_PUBLIC_KEY"`
+	AccessTokenExpiredIn  time.Duration `mapstructure:"ACCESS_TOKEN_EXPIRED_IN"`
+	//AccessTokenMaxAge     time.Duration `mapstructure:"ACCESS_TOKEN_MAXAGE"`
+
+	RefreshTokenPrivateKey string        `mapstructure:"REFRESH_TOKEN_PRIVATE_KEY"`
+	RefreshTokenPublicKey  string        `mapstructure:"REFRESH_TOKEN_PUBLIC_KEY"`
+	RefreshTokenExpiredIn  time.Duration `mapstructure:"REFRESH_TOKEN_EXPIRED_IN"`
+	//RefreshTokenMaxAge     time.Duration `mapstructure:"REFRESH_TOKEN_MAXAGE"`
 }
 
 func LoadEnvConfigs(logger *zerolog.Logger, path string) *EnvConfigs {

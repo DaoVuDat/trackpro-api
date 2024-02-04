@@ -6,6 +6,10 @@ type AuthSignUp struct {
 	LastName  string `json:"last_name"`
 }
 
+type AuthLoginTemp struct {
+	Token string `json:"token"`
+}
+
 type AuthLogin struct {
 	Type   *string `json:"type,omitempty"`
 	Status string  `json:"status,omitempty"`

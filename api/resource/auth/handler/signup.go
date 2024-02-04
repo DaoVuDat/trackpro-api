@@ -6,7 +6,7 @@ import (
 	"net/http"
 	accountrepo "trackpro/api/resource/account/repo"
 	authdto "trackpro/api/resource/auth/dto"
-	signupservice "trackpro/api/resource/auth/service"
+	"trackpro/api/resource/auth/service"
 	profilerepo "trackpro/api/resource/profile/repo"
 	"trackpro/api/router/common"
 	"trackpro/util/ctx"
@@ -21,11 +21,12 @@ func SignUp(app *ctx.Application) http.HandlerFunc {
 			panic(err)
 		}
 
+		curCtx := req.Context()
 		accountCreateRepo := accountrepo.NewPostgresStore(app.Db)
 		profileCreateRepo := profilerepo.NewPostgresStore(app.Db)
-		signUpService := signupservice.NewSignUpService(accountCreateRepo, profileCreateRepo)
+		signUpService := authservice.NewSignUpService(curCtx, accountCreateRepo, profileCreateRepo)
 
-		err = signUpService.SignUp(app, authSignUp)
+		token, err := signUpService.SignUp(app, authSignUp)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			render.JSON(w, req, common.InternalErrorResponse(err))
@@ -33,7 +34,7 @@ func SignUp(app *ctx.Application) http.HandlerFunc {
 		}
 
 		render.JSON(w, req, map[string]interface{}{
-			"Account": "Good",
+			"Token": token,
 		})
 	}
 }

@@ -50,6 +50,9 @@ func main() {
 
 	app.Db = db
 
+	// Temp
+	app.DataCache = map[string][]byte{}
+
 	// Setup Route
 	r := router.SetupRouter(app)
 

@@ -11,4 +11,7 @@ type Application struct {
 	Logger *zerolog.Logger
 	Config *config.EnvConfigs
 	Db     *sql.DB
+
+	// Temp
+	DataCache map[string][]byte
 }
