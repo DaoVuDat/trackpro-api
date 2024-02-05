@@ -8,6 +8,7 @@ import (
 	authhandler "trackpro/api/resource/auth/handler"
 	"trackpro/api/resource/healthcheck"
 	profilehandler "trackpro/api/resource/profile/handler"
+	projecthandler "trackpro/api/resource/project/handler"
 	"trackpro/api/router/common"
 	"trackpro/api/router/middleware"
 	"trackpro/util/ctx"
@@ -24,16 +25,11 @@ func SetupRouter(app *ctx.Application) *chi.Mux {
 		g.Post("/signup", authhandler.SignUp(app))
 		g.Post("/login", authhandler.Login(app))
 
-		//g.Get("/profile/{id}", profilehandler.FindProfile(app))
 		// Protected Routes
 		g.Group(func(g chi.Router) {
 			//g.Use(jwtauth.Verifier(app.JwtToken))
 			//g.Use(jwtauth.Authenticator(app.JwtToken))
 
-			g.Route("/profile", func(g chi.Router) {
-				g.Get("/{id}", profilehandler.FindProfile(app))
-				g.Patch("/{id}", profilehandler.UpdateProfile(app))
-			})
 			g.Route("/account", func(g chi.Router) {
 				g.Group(func(g chi.Router) {
 					g.Use(middleware.IsAdminMiddleware(app.Logger))
@@ -41,6 +37,19 @@ func SetupRouter(app *ctx.Application) *chi.Mux {
 				})
 				g.Get("/{id}", accounthandler.FindAccount(app))
 				g.Patch("/{id}", accounthandler.UpdateAccount(app))
+			})
+
+			g.Route("/profile", func(g chi.Router) {
+				g.Get("/{id}", profilehandler.FindProfile(app))
+				g.Patch("/{id}", profilehandler.UpdateProfile(app))
+			})
+
+			g.Route("/project", func(g chi.Router) {
+				g.Get("/", projecthandler.ListProject(app))
+				g.Post("/", projecthandler.CreateProject(app))
+				g.Get("/{id}", projecthandler.FindProject(app))
+				g.Patch("/{id}", projecthandler.UpdateProject(app))
+				g.Delete("/{id}", projecthandler.DeleteProject(app))
 			})
 
 		})

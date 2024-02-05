@@ -18,7 +18,6 @@ type Project struct {
 	Name        *string
 	Description *string
 	Price       *int32
-	Paid        *int32
 	Status      ProjectStatus
 	StartTime   *time.Time
 	EndTime     *time.Time

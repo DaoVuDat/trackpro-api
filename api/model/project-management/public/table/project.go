@@ -22,7 +22,6 @@ type projectTable struct {
 	Name        postgres.ColumnString
 	Description postgres.ColumnString
 	Price       postgres.ColumnInteger
-	Paid        postgres.ColumnInteger
 	Status      postgres.ColumnString
 	StartTime   postgres.ColumnTimestampz
 	EndTime     postgres.ColumnTimestampz
@@ -73,14 +72,13 @@ func newProjectTableImpl(schemaName, tableName, alias string) projectTable {
 		NameColumn        = postgres.StringColumn("name")
 		DescriptionColumn = postgres.StringColumn("description")
 		PriceColumn       = postgres.IntegerColumn("price")
-		PaidColumn        = postgres.IntegerColumn("paid")
 		StatusColumn      = postgres.StringColumn("status")
 		StartTimeColumn   = postgres.TimestampzColumn("start_time")
 		EndTimeColumn     = postgres.TimestampzColumn("end_time")
 		CreatedAtColumn   = postgres.TimestampzColumn("created_at")
 		UpdatedAtColumn   = postgres.TimestampzColumn("updated_at")
-		allColumns        = postgres.ColumnList{IDColumn, UserIDColumn, NameColumn, DescriptionColumn, PriceColumn, PaidColumn, StatusColumn, StartTimeColumn, EndTimeColumn, CreatedAtColumn, UpdatedAtColumn}
-		mutableColumns    = postgres.ColumnList{UserIDColumn, NameColumn, DescriptionColumn, PriceColumn, PaidColumn, StatusColumn, StartTimeColumn, EndTimeColumn, CreatedAtColumn, UpdatedAtColumn}
+		allColumns        = postgres.ColumnList{IDColumn, UserIDColumn, NameColumn, DescriptionColumn, PriceColumn, StatusColumn, StartTimeColumn, EndTimeColumn, CreatedAtColumn, UpdatedAtColumn}
+		mutableColumns    = postgres.ColumnList{UserIDColumn, NameColumn, DescriptionColumn, PriceColumn, StatusColumn, StartTimeColumn, EndTimeColumn, CreatedAtColumn, UpdatedAtColumn}
 	)
 
 	return projectTable{
@@ -92,7 +90,6 @@ func newProjectTableImpl(schemaName, tableName, alias string) projectTable {
 		Name:        NameColumn,
 		Description: DescriptionColumn,
 		Price:       PriceColumn,
-		Paid:        PaidColumn,
 		Status:      StatusColumn,
 		StartTime:   StartTimeColumn,
 		EndTime:     EndTimeColumn,

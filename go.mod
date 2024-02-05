@@ -1,4 +1,4 @@
-module trackpro
+module github.com/DaoVuDat/trackpro-api
 
 go 1.21
 
