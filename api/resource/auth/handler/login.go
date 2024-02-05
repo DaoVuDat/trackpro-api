@@ -2,7 +2,6 @@ package authhandler
 
 import (
 	"encoding/json"
-	"github.com/go-chi/render"
 	"net/http"
 	authdto "trackpro/api/resource/auth/dto"
 	"trackpro/api/resource/auth/service"
@@ -16,19 +15,19 @@ func Login(app *ctx.Application) http.HandlerFunc {
 
 		err := json.NewDecoder(req.Body).Decode(&authLogin)
 		if err != nil {
-			panic(err)
+			app.Render.JSON(w, http.StatusInternalServerError, common.InternalErrorResponse(err))
+			return
 		}
 
 		logInService := authservice.NewLoginService()
 
 		tokenDetail, err := logInService.Login(app, authLogin)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			render.JSON(w, req, common.InternalErrorResponse(err))
+			app.Render.JSON(w, http.StatusInternalServerError, common.InternalErrorResponse(err))
 			return
 		}
 
-		render.JSON(w, req, map[string]interface{}{
+		app.Render.JSON(w, http.StatusOK, map[string]interface{}{
 			"tokendetail": tokenDetail,
 		})
 	}

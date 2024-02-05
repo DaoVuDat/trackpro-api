@@ -40,7 +40,10 @@ func (store *postgresStore) CreateTX(app *ctx.Application, curCtx context.Contex
 		Username: create.UserName,
 	}
 
-	stmt := Account.INSERT(Account.Username).MODEL(accountToCreate).RETURNING(Account.AllColumns)
+	stmt := Account.INSERT(Account.Username).
+		MODEL(accountToCreate).
+		RETURNING(Account.AllColumns.
+			Except(Account.CreatedAt, Account.UpdatedAt))
 
 	var dest model.Account
 

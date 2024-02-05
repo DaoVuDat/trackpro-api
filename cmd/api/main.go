@@ -7,6 +7,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/ory/graceful"
+	"github.com/unrolled/render"
 	"net/http"
 	"trackpro/api/router"
 	"trackpro/util/config"
@@ -49,6 +50,10 @@ func main() {
 	defer db.Close()
 
 	app.Db = db
+
+	// Render
+	renderer := render.New()
+	app.Render = renderer
 
 	// Temp
 	app.DataCache = map[string][]byte{}

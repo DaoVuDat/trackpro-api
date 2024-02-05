@@ -11,13 +11,11 @@ import (
 )
 
 type UpdateAccountRepo interface {
-	Update(app *ctx.Application, accountId string, update accountdto.AccountUpdate) (*model.Account, error)
+	Update(app *ctx.Application, accountId uuid.UUID, update accountdto.AccountUpdate) (*model.Account, error)
 }
 
-func (store *postgresStore) Update(app *ctx.Application, accountId string, update accountdto.AccountUpdate) (*model.Account, error) {
+func (store *postgresStore) Update(app *ctx.Application, accountId uuid.UUID, update accountdto.AccountUpdate) (*model.Account, error) {
 	accountToUpdate := model.Account{
-		Type:      model.AccountType(update.Type.String),
-		Status:    model.AccountStatus(update.Status.String),
 		UpdatedAt: time.Now(), // this field could update in DB with trigger / function
 	}
 
@@ -51,8 +49,8 @@ func (store *postgresStore) Update(app *ctx.Application, accountId string, updat
 	// query
 	stmt := Account.UPDATE(fieldsToUpdate).
 		MODEL(accountToUpdate).
-		WHERE(Account.ID.EQ(UUID(uuid.MustParse(accountId)))).
-		RETURNING(Account.AllColumns)
+		WHERE(Account.ID.EQ(UUID(accountId))).
+		RETURNING(Account.AllColumns.Except(Account.UpdatedAt, Account.CreatedAt))
 
 	var account model.Account
 	err := stmt.Query(store.db, &account)

@@ -2,7 +2,6 @@ package authhandler
 
 import (
 	"encoding/json"
-	"github.com/go-chi/render"
 	"net/http"
 	accountrepo "trackpro/api/resource/account/repo"
 	authdto "trackpro/api/resource/auth/dto"
@@ -18,7 +17,8 @@ func SignUp(app *ctx.Application) http.HandlerFunc {
 
 		err := json.NewDecoder(req.Body).Decode(&authSignUp)
 		if err != nil {
-			panic(err)
+			app.Render.JSON(w, http.StatusInternalServerError, common.InternalErrorResponse(err))
+			return
 		}
 
 		curCtx := req.Context()
@@ -28,12 +28,11 @@ func SignUp(app *ctx.Application) http.HandlerFunc {
 
 		token, err := signUpService.SignUp(app, authSignUp)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			render.JSON(w, req, common.InternalErrorResponse(err))
+			app.Render.JSON(w, http.StatusInternalServerError, common.InternalErrorResponse(err))
 			return
 		}
 
-		render.JSON(w, req, map[string]interface{}{
+		app.Render.JSON(w, http.StatusOK, map[string]interface{}{
 			"Token": token,
 		})
 	}

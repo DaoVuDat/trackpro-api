@@ -5,7 +5,6 @@ go 1.21
 require (
 	github.com/fatih/color v1.16.0
 	github.com/go-chi/chi/v5 v5.0.11
-	github.com/go-chi/render v1.0.3
 	github.com/go-jet/jet/v2 v2.10.1
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/google/uuid v1.6.0
@@ -14,12 +13,12 @@ require (
 	github.com/ory/graceful v0.1.3
 	github.com/rs/zerolog v1.31.0
 	github.com/spf13/viper v1.18.2
+	github.com/unrolled/render v1.6.1
 	gopkg.in/guregu/null.v4 v4.0.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )
 
 require (
-	github.com/ajg/form v1.5.1 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.2.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect

@@ -1,11 +1,32 @@
 package common
 
-import "net/http"
+import (
+	"errors"
+	"net/http"
+)
 
 type ErrorResponse struct {
 	Status  int    `json:"status"`
 	Message string `json:"message"`
 	Error   string `json:"error"`
+}
+
+var (
+	QueryNoResultErr = errors.New("no record")
+)
+
+func BadRequestResponse(err error) ErrorResponse {
+	msgErr := "bad request"
+
+	if err != nil {
+		msgErr = err.Error()
+	}
+
+	return ErrorResponse{
+		Status:  http.StatusBadRequest,
+		Error:   "Bad Request Error",
+		Message: msgErr,
+	}
 }
 
 func InternalErrorResponse(err error) ErrorResponse {

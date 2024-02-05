@@ -3,7 +3,7 @@ package accounthandler
 import (
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/render"
+	"github.com/google/uuid"
 	"net/http"
 	accountdto "trackpro/api/resource/account/dto"
 	accountrepo "trackpro/api/resource/account/repo"
@@ -17,20 +17,25 @@ func UpdateAccount(app *ctx.Application) http.HandlerFunc {
 		var updateAccountData accountdto.AccountUpdate
 
 		// Get {id} param
-		accountId := chi.URLParam(req, "id")
-		app.Logger.Debug().Msg(accountId)
+		accountIdString := chi.URLParam(req, "id")
+		accountId, err := uuid.Parse(accountIdString)
+		if err != nil {
+			app.Render.JSON(w, http.StatusBadRequest, common.BadRequestResponse(err))
+			return
+		}
 
-		err := json.NewDecoder(req.Body).Decode(&updateAccountData)
+		err = json.NewDecoder(req.Body).Decode(&updateAccountData)
 		if err != nil {
 			app.Logger.Error().Msg("Error Decode JSON")
-			panic(1)
+			app.Render.JSON(w, http.StatusInternalServerError, common.InternalErrorResponse(err))
+			return
 		}
 
 		// validate input
 		err = updateAccountData.Validate()
 		if err != nil {
 			app.Logger.Error().Err(err)
-			render.JSON(w, req, common.InternalErrorResponse(err))
+			app.Render.JSON(w, http.StatusBadRequest, common.BadRequestResponse(err))
 			return
 		}
 
@@ -41,11 +46,11 @@ func UpdateAccount(app *ctx.Application) http.HandlerFunc {
 		updatedAccount, err := updateAccountService.Update(app, accountId, updateAccountData)
 		if err != nil {
 			app.Logger.Error().Err(err)
-			render.JSON(w, req, common.InternalErrorResponse(err))
+			app.Render.JSON(w, http.StatusInternalServerError, common.InternalErrorResponse(err))
 			return
 		}
 
-		render.JSON(w, req, []map[string]interface{}{
+		app.Render.JSON(w, http.StatusOK, []map[string]interface{}{
 			{"accounts": updatedAccount},
 		})
 	}

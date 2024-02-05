@@ -19,11 +19,6 @@ type AccountUpdate struct {
 	Status null.String `json:"status,omitempty"`
 }
 
-func (accountCreate AccountCreate) Validate() error {
-	return validation.ValidateStruct(&accountCreate,
-		validation.Field(&accountCreate.UserName, validation.Required, validation.Length(8, 20)))
-}
-
 func (accountUpdate AccountUpdate) Validate() error {
 	return validation.ValidateStruct(&accountUpdate,
 		validation.Field(&accountUpdate.Type,
@@ -35,7 +30,7 @@ func (accountUpdate AccountUpdate) Validate() error {
 					value := v.(null.String)
 					err := accountType.Scan(value.String)
 					if err != nil {
-						return errors.New(fmt.Sprintf("type must be %s or %s\n", model.AccountType_Admin, model.AccountType_Client))
+						return errors.New(fmt.Sprintf("must be %s or %s\n", model.AccountType_Admin, model.AccountType_Client))
 					}
 					return nil
 				}),
@@ -50,11 +45,20 @@ func (accountUpdate AccountUpdate) Validate() error {
 					value := v.(null.String)
 					err := accountStatus.Scan(value.String)
 					if err != nil {
-						return errors.New(fmt.Sprintf("status must be %s or %s\n", model.AccountStatus_Pending, model.AccountStatus_Activated))
+						return errors.New(fmt.Sprintf("must be %s or %s\n", model.AccountStatus_Pending, model.AccountStatus_Activated))
 					}
 					return nil
 				}),
 			),
 		),
 	)
+}
+
+// For response
+
+type AccountResponse struct {
+	UserId   string `json:"user_id"`
+	UserName string `json:"username"`
+	Type     string `json:"type"`
+	Status   string `json:"status"`
 }
