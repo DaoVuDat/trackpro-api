@@ -1,8 +1,8 @@
 package middleware
 
 import (
+	"github.com/DaoVuDat/trackpro-api/util/ctx"
 	"net/http"
-	"trackpro/util/ctx"
 )
 
 func AuthenticatedMiddleware(app *ctx.Application) func(http.Handler) http.Handler {

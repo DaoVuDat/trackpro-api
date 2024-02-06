@@ -1,9 +1,9 @@
 package authservice
 
 import (
-	authdto "trackpro/api/resource/auth/dto"
-	"trackpro/util/ctx"
-	"trackpro/util/jwt"
+	authdto "github.com/DaoVuDat/trackpro-api/api/resource/auth/dto"
+	"github.com/DaoVuDat/trackpro-api/util/ctx"
+	"github.com/DaoVuDat/trackpro-api/util/jwt"
 )
 
 type LoginService interface {

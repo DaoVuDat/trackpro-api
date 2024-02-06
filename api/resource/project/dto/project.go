@@ -1,7 +1,10 @@
 package projectdto
 
 import (
+	"errors"
+	"github.com/DaoVuDat/trackpro-api/api/model/project-management/public/model"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/google/uuid"
 	"gopkg.in/guregu/null.v4"
 	"time"
 )
@@ -16,24 +19,92 @@ type ProjectCreate struct {
 }
 
 func (projectCreate ProjectCreate) Validate() error {
-	return validation.ValidateStruct(&projectCreate)
+	return validation.ValidateStruct(&projectCreate,
+		validation.Field(&projectCreate.UserId,
+			validation.Required,
+			validation.By(func(v interface{}) error {
+				value := v.(string)
+				_, err := uuid.Parse(value)
+				if err != nil {
+					return errors.New("must be valid uuid")
+				}
+				return nil
+			}),
+		),
+		validation.Field(&projectCreate.Price,
+			validation.When(projectCreate.Price.Valid,
+				validation.Min(100),
+			),
+		),
+	)
 }
 
 type ProjectUpdate struct {
+	Name        null.String `json:"name"`
+	Description null.String `json:"description"`
+	Price       null.Int    `json:"price"`
+	StartTime   null.Time   `json:"start_time"`
+	EndTime     null.Time   `json:"end_time"`
 }
 
 func (projectUpdate ProjectUpdate) Validate() error {
-	return validation.Validate(&projectUpdate)
+	return validation.ValidateStruct(&projectUpdate,
+		validation.Field(&projectUpdate.Price,
+			validation.When(projectUpdate.Price.Valid,
+				validation.Min(100),
+			),
+		),
+		validation.Field(&projectUpdate.Name,
+			validation.When(projectUpdate.Name.Valid,
+				validation.By(func(v interface{}) error {
+					value := v.(null.String)
+					if len(value.String) < 1 {
+						return errors.New("must larger than 0 character")
+					}
+					return nil
+				}),
+			),
+		),
+		validation.Field(&projectUpdate.Description,
+			validation.When(projectUpdate.Price.Valid,
+				validation.By(func(v interface{}) error {
+					value := v.(null.String)
+					if len(value.String) < 1 {
+						return errors.New("must larger than 0 character")
+					}
+					return nil
+				}),
+			),
+		),
+	)
+}
+
+type ProjectQuery struct {
+	model.Project
+	model.Account
 }
 
 type ProjectResponse struct {
-	Id          string    `json:"id"`
-	UserId      string    `json:"user_id"`
-	UserName    string    `json:"username"`
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-	Price       int       `json:"price"`
-	Status      string    `json:"status"`
-	StartTime   time.Time `json:"start_time"`
-	EndTime     time.Time `json:"end_time"`
+	Id          string     `json:"id"`
+	UserId      string     `json:"user_id"`
+	UserName    string     `json:"username"`
+	ProjectName *string    `json:"project_name,omitempty"`
+	Description *string    `json:"description,omitempty"`
+	Price       *int       `json:"price,omitempty"`
+	Status      string     `json:"status"`
+	StartTime   *time.Time `json:"start_time,omitempty"`
+	EndTime     *time.Time `json:"end_time,omitempty"`
+}
+
+func (project *ProjectResponse) MapFromProjectQuery(query ProjectQuery) {
+	project.Id = query.Project.ID.String()
+	project.ProjectName = query.Name
+	project.Description = query.Description
+	project.UserId = query.UserID.String()
+	project.Status = query.Project.Status.String()
+	project.UserName = query.Username
+	price := int(*query.Price)
+	project.Price = &price
+	project.StartTime = query.StartTime
+	project.EndTime = query.EndTime
 }

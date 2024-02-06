@@ -1,10 +1,10 @@
 package accountservice
 
 import (
+	accountdto "github.com/DaoVuDat/trackpro-api/api/resource/account/dto"
+	accountrepo "github.com/DaoVuDat/trackpro-api/api/resource/account/repo"
+	"github.com/DaoVuDat/trackpro-api/util/ctx"
 	"github.com/google/uuid"
-	accountdto "trackpro/api/resource/account/dto"
-	accountrepo "trackpro/api/resource/account/repo"
-	"trackpro/util/ctx"
 )
 
 type FindAccountService interface {

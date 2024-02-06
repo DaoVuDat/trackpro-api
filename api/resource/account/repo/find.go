@@ -2,13 +2,13 @@ package accountrepo
 
 import (
 	"errors"
+	"github.com/DaoVuDat/trackpro-api/api/model/project-management/public/model"
+	. "github.com/DaoVuDat/trackpro-api/api/model/project-management/public/table"
+	"github.com/DaoVuDat/trackpro-api/api/router/common"
+	"github.com/DaoVuDat/trackpro-api/util/ctx"
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/google/uuid"
-	"trackpro/api/model/project-management/public/model"
-	. "trackpro/api/model/project-management/public/table"
-	"trackpro/api/router/common"
-	"trackpro/util/ctx"
 )
 
 type FindAccountRepo interface {

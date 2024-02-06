@@ -1,17 +1,17 @@
 package router
 
 import (
+	accounthandler "github.com/DaoVuDat/trackpro-api/api/resource/account/handler"
+	authhandler "github.com/DaoVuDat/trackpro-api/api/resource/auth/handler"
+	healthcheck "github.com/DaoVuDat/trackpro-api/api/resource/healthcheck"
+	profilehandler "github.com/DaoVuDat/trackpro-api/api/resource/profile/handler"
+	projecthandler "github.com/DaoVuDat/trackpro-api/api/resource/project/handler"
+	"github.com/DaoVuDat/trackpro-api/api/router/common"
+	"github.com/DaoVuDat/trackpro-api/api/router/middleware"
+	"github.com/DaoVuDat/trackpro-api/util/ctx"
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
 	"net/http"
-	accounthandler "trackpro/api/resource/account/handler"
-	authhandler "trackpro/api/resource/auth/handler"
-	"trackpro/api/resource/healthcheck"
-	profilehandler "trackpro/api/resource/profile/handler"
-	projecthandler "trackpro/api/resource/project/handler"
-	"trackpro/api/router/common"
-	"trackpro/api/router/middleware"
-	"trackpro/util/ctx"
 )
 
 func SetupRouter(app *ctx.Application) *chi.Mux {

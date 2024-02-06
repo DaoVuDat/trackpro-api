@@ -1,11 +1,11 @@
 package accounthandler
 
 import (
+	accountrepo "github.com/DaoVuDat/trackpro-api/api/resource/account/repo"
+	accountservice "github.com/DaoVuDat/trackpro-api/api/resource/account/service"
+	"github.com/DaoVuDat/trackpro-api/api/router/common"
+	"github.com/DaoVuDat/trackpro-api/util/ctx"
 	"net/http"
-	accountrepo "trackpro/api/resource/account/repo"
-	accountservice "trackpro/api/resource/account/service"
-	"trackpro/api/router/common"
-	"trackpro/util/ctx"
 )
 
 func ListAccount(app *ctx.Application) http.HandlerFunc {

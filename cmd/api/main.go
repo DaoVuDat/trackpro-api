@@ -4,15 +4,15 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"github.com/DaoVuDat/trackpro-api/api/router"
+	"github.com/DaoVuDat/trackpro-api/util/config"
+	"github.com/DaoVuDat/trackpro-api/util/cstlogger"
+	"github.com/DaoVuDat/trackpro-api/util/ctx"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/ory/graceful"
 	"github.com/unrolled/render"
 	"net/http"
-	"trackpro/api/router"
-	"trackpro/util/config"
-	"trackpro/util/cstlogger"
-	"trackpro/util/ctx"
 )
 
 func main() {

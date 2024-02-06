@@ -2,11 +2,11 @@ package authhandler
 
 import (
 	"encoding/json"
+	authdto "github.com/DaoVuDat/trackpro-api/api/resource/auth/dto"
+	authservice "github.com/DaoVuDat/trackpro-api/api/resource/auth/service"
+	"github.com/DaoVuDat/trackpro-api/api/router/common"
+	"github.com/DaoVuDat/trackpro-api/util/ctx"
 	"net/http"
-	authdto "trackpro/api/resource/auth/dto"
-	"trackpro/api/resource/auth/service"
-	"trackpro/api/router/common"
-	"trackpro/util/ctx"
 )
 
 func Login(app *ctx.Application) http.HandlerFunc {

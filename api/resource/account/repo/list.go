@@ -1,10 +1,10 @@
 package accountrepo
 
 import (
+	"github.com/DaoVuDat/trackpro-api/api/model/project-management/public/model"
+	. "github.com/DaoVuDat/trackpro-api/api/model/project-management/public/table"
+	"github.com/DaoVuDat/trackpro-api/util/ctx"
 	. "github.com/go-jet/jet/v2/postgres"
-	"trackpro/api/model/project-management/public/model"
-	. "trackpro/api/model/project-management/public/table"
-	"trackpro/util/ctx"
 )
 
 type ListAccountRepo interface {

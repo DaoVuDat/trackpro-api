@@ -2,13 +2,13 @@ package accounthandler
 
 import (
 	"errors"
+	accountrepo "github.com/DaoVuDat/trackpro-api/api/resource/account/repo"
+	accountservice "github.com/DaoVuDat/trackpro-api/api/resource/account/service"
+	"github.com/DaoVuDat/trackpro-api/api/router/common"
+	"github.com/DaoVuDat/trackpro-api/util/ctx"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"net/http"
-	accountrepo "trackpro/api/resource/account/repo"
-	accountservice "trackpro/api/resource/account/service"
-	"trackpro/api/router/common"
-	"trackpro/util/ctx"
 )
 
 func FindAccount(app *ctx.Application) http.HandlerFunc {

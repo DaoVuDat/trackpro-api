@@ -3,11 +3,13 @@ package accountrepo
 import (
 	"context"
 	"database/sql"
-	"trackpro/api/model/project-management/public/model"
-	. "trackpro/api/model/project-management/public/table"
-	accountdto "trackpro/api/resource/account/dto"
-
-	"trackpro/util/ctx"
+	"errors"
+	"github.com/DaoVuDat/trackpro-api/api/model/project-management/public/model"
+	. "github.com/DaoVuDat/trackpro-api/api/model/project-management/public/table"
+	accountdto "github.com/DaoVuDat/trackpro-api/api/resource/account/dto"
+	"github.com/DaoVuDat/trackpro-api/api/router/common"
+	"github.com/DaoVuDat/trackpro-api/util/ctx"
+	"github.com/go-jet/jet/v2/qrm"
 )
 
 type CreateAccountRepo interface {
@@ -49,6 +51,9 @@ func (store *postgresStore) CreateTX(app *ctx.Application, curCtx context.Contex
 
 	err := stmt.QueryContext(curCtx, tx, &dest)
 	if err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, common.FailCreateError
+		}
 		app.Logger.Error().Err(err)
 		return nil, err
 	}

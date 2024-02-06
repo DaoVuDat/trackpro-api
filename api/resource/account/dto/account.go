@@ -3,9 +3,9 @@ package accountdto
 import (
 	"errors"
 	"fmt"
+	"github.com/DaoVuDat/trackpro-api/api/model/project-management/public/model"
 	"github.com/go-ozzo/ozzo-validation/v4"
 	"gopkg.in/guregu/null.v4"
-	"trackpro/api/model/project-management/public/model"
 )
 
 // This file for unmarshalling in handler

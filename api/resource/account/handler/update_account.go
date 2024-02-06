@@ -2,14 +2,15 @@ package accounthandler
 
 import (
 	"encoding/json"
+	"errors"
+	accountdto "github.com/DaoVuDat/trackpro-api/api/resource/account/dto"
+	accountrepo "github.com/DaoVuDat/trackpro-api/api/resource/account/repo"
+	accountservice "github.com/DaoVuDat/trackpro-api/api/resource/account/service"
+	"github.com/DaoVuDat/trackpro-api/api/router/common"
+	"github.com/DaoVuDat/trackpro-api/util/ctx"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"net/http"
-	accountdto "trackpro/api/resource/account/dto"
-	accountrepo "trackpro/api/resource/account/repo"
-	accountservice "trackpro/api/resource/account/service"
-	"trackpro/api/router/common"
-	"trackpro/util/ctx"
 )
 
 func UpdateAccount(app *ctx.Application) http.HandlerFunc {
@@ -45,6 +46,11 @@ func UpdateAccount(app *ctx.Application) http.HandlerFunc {
 
 		updatedAccount, err := updateAccountService.Update(app, accountId, updateAccountData)
 		if err != nil {
+			if errors.Is(err, common.FailUpdateError) {
+				app.Logger.Error().Err(err)
+				app.Render.JSON(w, http.StatusInternalServerError, common.InternalErrorResponse(err))
+				return
+			}
 			app.Logger.Error().Err(err)
 			app.Render.JSON(w, http.StatusInternalServerError, common.InternalErrorResponse(err))
 			return

@@ -1,13 +1,16 @@
 package accountrepo
 
 import (
+	"errors"
+	"github.com/DaoVuDat/trackpro-api/api/model/project-management/public/model"
+	. "github.com/DaoVuDat/trackpro-api/api/model/project-management/public/table"
+	accountdto "github.com/DaoVuDat/trackpro-api/api/resource/account/dto"
+	"github.com/DaoVuDat/trackpro-api/api/router/common"
+	"github.com/DaoVuDat/trackpro-api/util/ctx"
 	. "github.com/go-jet/jet/v2/postgres"
+	"github.com/go-jet/jet/v2/qrm"
 	"github.com/google/uuid"
 	"time"
-	"trackpro/api/model/project-management/public/model"
-	. "trackpro/api/model/project-management/public/table"
-	accountdto "trackpro/api/resource/account/dto"
-	"trackpro/util/ctx"
 )
 
 type UpdateAccountRepo interface {
@@ -55,6 +58,10 @@ func (store *postgresStore) Update(app *ctx.Application, accountId uuid.UUID, up
 	var account model.Account
 	err := stmt.Query(store.db, &account)
 	if err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, common.FailUpdateError
+
+		}
 		app.Logger.Error().Err(err)
 		return nil, err
 	}

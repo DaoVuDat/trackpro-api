@@ -44,7 +44,7 @@ func NewLogger(env string) *zerolog.Logger {
 		}}
 
 	if strings.Contains(env, "prod") {
-		logLevel = zerolog.ErrorLevel
+		//logLevel = zerolog.ErrorLevel
 		fileLogger := &lumberjack.Logger{
 			Filename:   "track-pro-app.log",
 			MaxSize:    10, //

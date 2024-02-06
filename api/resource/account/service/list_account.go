@@ -1,9 +1,9 @@
 package accountservice
 
 import (
-	accountdto "trackpro/api/resource/account/dto"
-	accountrepo "trackpro/api/resource/account/repo"
-	"trackpro/util/ctx"
+	accountdto "github.com/DaoVuDat/trackpro-api/api/resource/account/dto"
+	accountrepo "github.com/DaoVuDat/trackpro-api/api/resource/account/repo"
+	"github.com/DaoVuDat/trackpro-api/util/ctx"
 )
 
 type ListAccountService interface {

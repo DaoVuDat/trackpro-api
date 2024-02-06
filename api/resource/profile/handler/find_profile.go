@@ -2,13 +2,13 @@ package profilehandler
 
 import (
 	"errors"
+	profilerepo "github.com/DaoVuDat/trackpro-api/api/resource/profile/repo"
+	profileservice "github.com/DaoVuDat/trackpro-api/api/resource/profile/service"
+	"github.com/DaoVuDat/trackpro-api/api/router/common"
+	"github.com/DaoVuDat/trackpro-api/util/ctx"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"net/http"
-	profilerepo "trackpro/api/resource/profile/repo"
-	profileservice "trackpro/api/resource/profile/service"
-	"trackpro/api/router/common"
-	"trackpro/util/ctx"
 )
 
 func FindProfile(app *ctx.Application) http.HandlerFunc {

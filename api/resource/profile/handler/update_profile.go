@@ -3,14 +3,14 @@ package profilehandler
 import (
 	"encoding/json"
 	"errors"
+	profiledto "github.com/DaoVuDat/trackpro-api/api/resource/profile/dto"
+	profilerepo "github.com/DaoVuDat/trackpro-api/api/resource/profile/repo"
+	profileservice "github.com/DaoVuDat/trackpro-api/api/resource/profile/service"
+	"github.com/DaoVuDat/trackpro-api/api/router/common"
+	"github.com/DaoVuDat/trackpro-api/util/ctx"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"net/http"
-	profiledto "trackpro/api/resource/profile/dto"
-	profilerepo "trackpro/api/resource/profile/repo"
-	profileservice "trackpro/api/resource/profile/service"
-	"trackpro/api/router/common"
-	"trackpro/util/ctx"
 )
 
 func UpdateProfile(app *ctx.Application) http.HandlerFunc {
@@ -44,11 +44,14 @@ func UpdateProfile(app *ctx.Application) http.HandlerFunc {
 
 		profile, err := updateProfileService.Update(app, accountId, profileUpdate)
 		if err != nil {
-			if errors.Is(err, common.QueryNoResultErr) {
+			if errors.Is(err, common.FailUpdateError) {
 				app.Logger.Error().Err(err)
-				app.Render.JSON(w, http.StatusNotFound, common.NotFoundErrorResponse(err))
+				app.Render.JSON(w, http.StatusInternalServerError, common.InternalErrorResponse(err))
 				return
 			}
+			app.Logger.Error().Err(err)
+			app.Render.JSON(w, http.StatusInternalServerError, common.InternalErrorResponse(err))
+			return
 		}
 
 		app.Render.JSON(w, http.StatusOK, map[string]interface{}{

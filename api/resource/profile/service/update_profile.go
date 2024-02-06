@@ -1,10 +1,10 @@
 package profileservice
 
 import (
+	profiledto "github.com/DaoVuDat/trackpro-api/api/resource/profile/dto"
+	profilerepo "github.com/DaoVuDat/trackpro-api/api/resource/profile/repo"
+	"github.com/DaoVuDat/trackpro-api/util/ctx"
 	"github.com/google/uuid"
-	profiledto "trackpro/api/resource/profile/dto"
-	profilerepo "trackpro/api/resource/profile/repo"
-	"trackpro/util/ctx"
 )
 
 type UpdateProfileService interface {

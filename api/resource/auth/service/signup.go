@@ -2,14 +2,14 @@ package authservice
 
 import (
 	"context"
-	"trackpro/api/model/project-management/public/model"
-	accountdto "trackpro/api/resource/account/dto"
-	accountrepo "trackpro/api/resource/account/repo"
-	authdto "trackpro/api/resource/auth/dto"
-	profiledto "trackpro/api/resource/profile/dto"
-	profilerepo "trackpro/api/resource/profile/repo"
-	"trackpro/util/ctx"
-	"trackpro/util/jwt"
+	"github.com/DaoVuDat/trackpro-api/api/model/project-management/public/model"
+	accountdto "github.com/DaoVuDat/trackpro-api/api/resource/account/dto"
+	accountrepo "github.com/DaoVuDat/trackpro-api/api/resource/account/repo"
+	authdto "github.com/DaoVuDat/trackpro-api/api/resource/auth/dto"
+	profiledto "github.com/DaoVuDat/trackpro-api/api/resource/profile/dto"
+	profilerepo "github.com/DaoVuDat/trackpro-api/api/resource/profile/repo"
+	"github.com/DaoVuDat/trackpro-api/util/ctx"
+	"github.com/DaoVuDat/trackpro-api/util/jwt"
 )
 
 type SignUpService interface {

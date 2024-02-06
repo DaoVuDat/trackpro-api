@@ -2,13 +2,14 @@ package authhandler
 
 import (
 	"encoding/json"
+	"errors"
+	accountrepo "github.com/DaoVuDat/trackpro-api/api/resource/account/repo"
+	authdto "github.com/DaoVuDat/trackpro-api/api/resource/auth/dto"
+	authservice "github.com/DaoVuDat/trackpro-api/api/resource/auth/service"
+	profilerepo "github.com/DaoVuDat/trackpro-api/api/resource/profile/repo"
+	"github.com/DaoVuDat/trackpro-api/api/router/common"
+	"github.com/DaoVuDat/trackpro-api/util/ctx"
 	"net/http"
-	accountrepo "trackpro/api/resource/account/repo"
-	authdto "trackpro/api/resource/auth/dto"
-	"trackpro/api/resource/auth/service"
-	profilerepo "trackpro/api/resource/profile/repo"
-	"trackpro/api/router/common"
-	"trackpro/util/ctx"
 )
 
 func SignUp(app *ctx.Application) http.HandlerFunc {
@@ -28,6 +29,12 @@ func SignUp(app *ctx.Application) http.HandlerFunc {
 
 		token, err := signUpService.SignUp(app, authSignUp)
 		if err != nil {
+			if errors.Is(err, common.FailCreateError) {
+				app.Logger.Error().Err(err)
+				app.Render.JSON(w, http.StatusInternalServerError, common.InternalErrorResponse(err))
+				return
+			}
+
 			app.Render.JSON(w, http.StatusInternalServerError, common.InternalErrorResponse(err))
 			return
 		}

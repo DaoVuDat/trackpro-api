@@ -2,15 +2,15 @@ package profilerepo
 
 import (
 	"errors"
+	"github.com/DaoVuDat/trackpro-api/api/model/project-management/public/model"
+	. "github.com/DaoVuDat/trackpro-api/api/model/project-management/public/table"
+	profiledto "github.com/DaoVuDat/trackpro-api/api/resource/profile/dto"
+	"github.com/DaoVuDat/trackpro-api/api/router/common"
+	"github.com/DaoVuDat/trackpro-api/util/ctx"
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/google/uuid"
 	"time"
-	"trackpro/api/model/project-management/public/model"
-	. "trackpro/api/model/project-management/public/table"
-	profiledto "trackpro/api/resource/profile/dto"
-	"trackpro/api/router/common"
-	"trackpro/util/ctx"
 )
 
 type UpdateProfileRepo interface {
@@ -51,7 +51,7 @@ func (store *postgresStore) Update(app *ctx.Application, accountId uuid.UUID, up
 	if err != nil {
 		app.Logger.Error().Err(err)
 		if errors.Is(err, qrm.ErrNoRows) {
-			return nil, common.QueryNoResultErr
+			return nil, common.FailUpdateError
 		}
 		return nil, err
 	}

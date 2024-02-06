@@ -13,6 +13,10 @@ type ErrorResponse struct {
 
 var (
 	QueryNoResultErr = errors.New("no record")
+	FailUpdateError  = errors.New("update failure")
+	FailCreateError  = errors.New("create failure")
+	FailDeleteError  = errors.New("delete failure")
+	UUIDBadRequest   = errors.New("invalid uuid")
 )
 
 func BadRequestResponse(err error) ErrorResponse {

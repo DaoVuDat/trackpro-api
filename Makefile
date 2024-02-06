@@ -31,3 +31,7 @@ goose-reset:
 .PHONY: jet-gen
 jet-gen:
 	jet -dsn=${DB_DSN} -path=./api/model/
+
+.PHONY: build
+build:
+	go build -o ./bin/app github.com/DaoVuDat/trackpro-api/cmd/api
