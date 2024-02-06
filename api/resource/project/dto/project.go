@@ -2,6 +2,7 @@ package projectdto
 
 import (
 	"errors"
+	"fmt"
 	"github.com/DaoVuDat/trackpro-api/api/model/project-management/public/model"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/google/uuid"
@@ -43,8 +44,9 @@ type ProjectUpdate struct {
 	Name        null.String `json:"name"`
 	Description null.String `json:"description"`
 	Price       null.Int    `json:"price"`
-	StartTime   null.Time   `json:"start_time"`
-	EndTime     null.Time   `json:"end_time"`
+	StartTime   null.Time   `json:"start_time,omitempty"`
+	EndTime     null.Time   `json:"end_time,omitempty"`
+	Status      null.String `json:"status"`
 }
 
 func (projectUpdate ProjectUpdate) Validate() error {
@@ -71,6 +73,23 @@ func (projectUpdate ProjectUpdate) Validate() error {
 					value := v.(null.String)
 					if len(value.String) < 1 {
 						return errors.New("must larger than 0 character")
+					}
+					return nil
+				}),
+			),
+		),
+		validation.Field(&projectUpdate.Status,
+			validation.When(projectUpdate.Status.Valid,
+				validation.By(func(v interface{}) error {
+					value := v.(null.String)
+
+					var projectStatus model.ProjectStatus
+					err := projectStatus.Scan(value.String)
+					if err != nil {
+						return errors.New(fmt.Sprintf("must be %s, %s, or %s\n",
+							model.ProjectStatus_Registering,
+							model.ProjectStatus_Progressing,
+							model.ProjectStatus_Finished))
 					}
 					return nil
 				}),

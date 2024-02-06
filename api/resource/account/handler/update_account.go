@@ -33,8 +33,7 @@ func UpdateAccount(app *ctx.Application) http.HandlerFunc {
 		}
 
 		// validate input
-		err = updateAccountData.Validate()
-		if err != nil {
+		if err = updateAccountData.Validate(); err != nil {
 			app.Logger.Error().Err(err)
 			app.Render.JSON(w, http.StatusBadRequest, common.BadRequestResponse(err))
 			return

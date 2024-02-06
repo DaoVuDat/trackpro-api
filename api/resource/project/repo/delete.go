@@ -12,10 +12,10 @@ import (
 )
 
 type DeleteProjectRepo interface {
-	Delete(app *ctx.Application, projectId uuid.UUID, userId *uuid.UUID) (bool, error)
+	Delete(app *ctx.Application, projectId uuid.UUID, userId *uuid.UUID) error
 }
 
-func (store *postgresStore) Delete(app *ctx.Application, projectId uuid.UUID, userId *uuid.UUID) (bool, error) {
+func (store *postgresStore) Delete(app *ctx.Application, projectId uuid.UUID, userId *uuid.UUID) error {
 	condition := Bool(true)
 	condition = condition.AND(Project.ID.EQ(UUID(projectId)))
 
@@ -27,20 +27,23 @@ func (store *postgresStore) Delete(app *ctx.Application, projectId uuid.UUID, us
 		DELETE().
 		WHERE(condition).RETURNING(Project.ID)
 
+	query, _ := stmt.Sql()
+	app.Logger.Debug().Msg(query)
+
 	var project model.Project
 
-	err := stmt.Query(store.db, &projectId)
+	err := stmt.Query(store.db, &project)
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
-			return false, common.FailDeleteError
+			return common.FailDeleteError
 		}
 
-		return false, err
+		return err
 	}
 
 	if _, err = uuid.Parse(project.ID.String()); err != nil {
-		return false, common.FailDeleteError
+		return common.FailDeleteError
 	}
 
-	return true, nil
+	return nil
 }
