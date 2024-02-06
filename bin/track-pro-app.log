@@ -1,4 +1,0 @@
-{"level":"panic","error":"open .env: no such file or directory","time":"2024-02-06T01:07:30+07:00","caller":"/Users/daovudat/Desktop/Projects/GoLangProjects/trackpro/util/config/load_config.go:38","message":"Error reading env file"}
-{"level":"info","time":"2024-02-06T01:12:37+07:00","caller":"/Users/daovudat/Desktop/Projects/GoLangProjects/trackpro/cmd/api/main.go:73","message":"Listening on PORT: 8080"}
-{"level":"info","IP":"[::1]:59250","Host":"localhost:8080","Protocol":"HTTP/1.1","URI":"/v1/account/f175fe95-be74-4a9a-a19d-f04eb31fa5a4","Method":"GET","UserAgent":"PostmanRuntime/7.36.0","time":"2024-02-06T01:12:45+07:00","caller":"/Users/daovudat/Desktop/Projects/GoLangProjects/trackpro/api/router/middleware/logging.go:19"}
-{"level":"info","time":"2024-02-06T01:13:49+07:00","caller":"/Users/daovudat/Desktop/Projects/GoLangProjects/trackpro/cmd/api/main.go:77","message":"Server was shutdown gracefully"}
