@@ -115,7 +115,7 @@ type ProjectResponse struct {
 	Status      string                       `json:"status"`
 	StartTime   *time.Time                   `json:"start_time,omitempty"`
 	EndTime     *time.Time                   `json:"end_time,omitempty"`
-	Payment     []paymentdto.PaymentResponse `json:"payment"`
+	Payment     []paymentdto.PaymentResponse `json:"payment,omitempty"`
 }
 
 func (project *ProjectResponse) MapFromProjectQuery(query ProjectQuery) {
@@ -137,6 +137,7 @@ func (project *ProjectResponse) MapFromProjectQuery(query ProjectQuery) {
 			payment.MapFromQuery(paymentQuery)
 			payments[i] = payment
 		}
+		project.Payment = payments
 	} else {
 		project.Payment = make([]paymentdto.PaymentResponse, 0)
 	}

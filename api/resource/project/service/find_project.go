@@ -8,21 +8,21 @@ import (
 )
 
 type FindProjectService interface {
-	Find(app *ctx.Application, projectId uuid.UUID, userId *uuid.UUID) (*projectdto.ProjectResponse, error)
+	Find(app *ctx.Application, projectId uuid.UUID, userId *uuid.UUID, returnPayment bool) (*projectdto.ProjectResponse, error)
 }
 
 type findProjectService struct {
 	findProjectRepo projectrepo.FindProjectRepo
 }
 
-func NewFindProjectService(findProojectRepo projectrepo.FindProjectRepo) FindProjectService {
+func NewFindProjectService(findProjectRepo projectrepo.FindProjectRepo) FindProjectService {
 	return &findProjectService{
-		findProjectRepo: findProojectRepo,
+		findProjectRepo: findProjectRepo,
 	}
 }
 
-func (service *findProjectService) Find(app *ctx.Application, projectId uuid.UUID, userId *uuid.UUID) (*projectdto.ProjectResponse, error) {
-	project, err := service.findProjectRepo.Find(app, projectId, userId)
+func (service *findProjectService) Find(app *ctx.Application, projectId uuid.UUID, userId *uuid.UUID, returnPayment bool) (*projectdto.ProjectResponse, error) {
+	project, err := service.findProjectRepo.Find(app, projectId, userId, returnPayment)
 	if err != nil {
 		return nil, err
 	}

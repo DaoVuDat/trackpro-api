@@ -12,32 +12,42 @@ import (
 )
 
 type FindProjectRepo interface {
-	Find(app *ctx.Application, projectId uuid.UUID, userId *uuid.UUID) (*projectdto.ProjectQuery, error)
+	Find(app *ctx.Application, projectId uuid.UUID, userId *uuid.UUID, returnPayment bool) (*projectdto.ProjectQuery, error)
 }
 
-func (store *postgresStore) Find(app *ctx.Application, projectId uuid.UUID, userId *uuid.UUID) (*projectdto.ProjectQuery, error) {
-	condition := Bool(true)
-	condition = condition.AND(Project.ID.EQ(UUID(projectId)))
+func (store *postgresStore) Find(app *ctx.Application, projectId uuid.UUID, userId *uuid.UUID, returnPayment bool) (*projectdto.ProjectQuery, error) {
 
-	if userId != nil {
-		condition = condition.AND(Project.UserID.EQ(UUID(*userId)))
+	// Setup dynamic SELECT statement
+	var selectColumns ProjectionList
+	selectColumns = ProjectionList{
+		Project.AllColumns.Except(Project.CreatedAt, Project.UpdatedAt),
+		Account.Username,
 	}
 
-	stmt := SELECT(Project.AllColumns.Except(Project.CreatedAt, Project.UpdatedAt), Account.Username).
-		FROM(Project.INNER_JOIN(Account, Account.ID.EQ(Project.UserID))).
-		WHERE(condition)
+	// Setup dynamic FROM statement
+	var fromStatement ReadableTable
+	fromStatement = Project.INNER_JOIN(Account, Account.ID.EQ(Project.UserID))
 
-	//var whereStmt ReadableTable
-	//whereStmt = Project.INNER_JOIN(Account, Account.ID.EQ(Project.UserID))
-	//whereStmt = whereStmt.LEFT_JOIN(PaymentHistory, Project.ID.EQ(PaymentHistory.ProjectID))
-	//
-	//testStmt := SELECT(Project.AllColumns.Except(Project.CreatedAt, Project.UpdatedAt), Account.Username, PaymentHistory.Amount).
-	//	FROM(whereStmt).
-	//	WHERE(condition)
-	//
-	//query, _ := testStmt.Sql()
-	//
-	//app.Logger.Debug().Msg(query)
+	// Setup dynamic WHERE statement
+	whereStatement := Bool(true)
+	whereStatement = whereStatement.AND(Project.ID.EQ(UUID(projectId)))
+
+	if userId != nil {
+		whereStatement = whereStatement.AND(Project.UserID.EQ(UUID(*userId)))
+	}
+
+	if returnPayment {
+		selectColumns = ProjectionList{
+			Project.AllColumns.Except(Project.CreatedAt, Project.UpdatedAt),
+			Account.Username,
+			PaymentHistory.ID, PaymentHistory.Amount, PaymentHistory.CreatedAt,
+		}
+		fromStatement = fromStatement.LEFT_JOIN(PaymentHistory, Project.ID.EQ(PaymentHistory.ProjectID))
+	}
+
+	stmt := SELECT(selectColumns).
+		FROM(fromStatement).
+		WHERE(whereStatement)
 
 	var project projectdto.ProjectQuery
 

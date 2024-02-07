@@ -9,6 +9,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"net/http"
+	"strconv"
 )
 
 func FindProject(app *ctx.Application) http.HandlerFunc {
@@ -32,10 +33,17 @@ func FindProject(app *ctx.Application) http.HandlerFunc {
 			userId = &parsedUuid
 		}
 
+		payment := false
+		paymentString := req.URL.Query().Get("payment")
+
+		if parsedPayment, err := strconv.ParseBool(paymentString); err == nil {
+			payment = parsedPayment
+		}
+
 		findProjectRepo := projectrepo.NewPostgresStore(app.Db)
 		findProjectService := projectservice.NewFindProjectService(findProjectRepo)
 
-		projectResponse, err := findProjectService.Find(app, projectId, userId)
+		projectResponse, err := findProjectService.Find(app, projectId, userId, payment)
 		if err != nil {
 			if errors.Is(err, common.QueryNoResultErr) {
 				app.Render.JSON(w, http.StatusNotFound, common.NotFoundErrorResponse(err))
