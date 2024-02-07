@@ -27,6 +27,18 @@ func (store *postgresStore) Find(app *ctx.Application, projectId uuid.UUID, user
 		FROM(Project.INNER_JOIN(Account, Account.ID.EQ(Project.UserID))).
 		WHERE(condition)
 
+	//var whereStmt ReadableTable
+	//whereStmt = Project.INNER_JOIN(Account, Account.ID.EQ(Project.UserID))
+	//whereStmt = whereStmt.LEFT_JOIN(PaymentHistory, Project.ID.EQ(PaymentHistory.ProjectID))
+	//
+	//testStmt := SELECT(Project.AllColumns.Except(Project.CreatedAt, Project.UpdatedAt), Account.Username, PaymentHistory.Amount).
+	//	FROM(whereStmt).
+	//	WHERE(condition)
+	//
+	//query, _ := testStmt.Sql()
+	//
+	//app.Logger.Debug().Msg(query)
+
 	var project projectdto.ProjectQuery
 
 	err := stmt.Query(store.db, &project)

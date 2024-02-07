@@ -4,6 +4,7 @@ import (
 	accounthandler "github.com/DaoVuDat/trackpro-api/api/resource/account/handler"
 	authhandler "github.com/DaoVuDat/trackpro-api/api/resource/auth/handler"
 	healthcheck "github.com/DaoVuDat/trackpro-api/api/resource/healthcheck"
+	paymenthandler "github.com/DaoVuDat/trackpro-api/api/resource/payment/handler"
 	profilehandler "github.com/DaoVuDat/trackpro-api/api/resource/profile/handler"
 	projecthandler "github.com/DaoVuDat/trackpro-api/api/resource/project/handler"
 	"github.com/DaoVuDat/trackpro-api/api/router/common"
@@ -25,7 +26,11 @@ func SetupRouter(app *ctx.Application) *chi.Mux {
 		g.Post("/signup", authhandler.SignUp(app))
 		g.Post("/login", authhandler.Login(app))
 
-		// Protected Routes
+		g.Group(func(g chi.Router) {
+			// Only Admin can create payment ( for now )
+			g.Post("/payment", paymenthandler.CreatePayment(app))
+		})
+
 		g.Group(func(g chi.Router) {
 			//g.Use(jwtauth.Verifier(app.JwtToken))
 			//g.Use(jwtauth.Authenticator(app.JwtToken))

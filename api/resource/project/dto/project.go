@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/DaoVuDat/trackpro-api/api/model/project-management/public/model"
+	paymentdto "github.com/DaoVuDat/trackpro-api/api/resource/payment/dto"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/google/uuid"
 	"gopkg.in/guregu/null.v4"
@@ -101,18 +102,20 @@ func (projectUpdate ProjectUpdate) Validate() error {
 type ProjectQuery struct {
 	model.Project
 	model.Account
+	Payments []model.PaymentHistory
 }
 
 type ProjectResponse struct {
-	Id          string     `json:"id"`
-	UserId      string     `json:"user_id"`
-	UserName    string     `json:"username"`
-	ProjectName *string    `json:"project_name,omitempty"`
-	Description *string    `json:"description,omitempty"`
-	Price       *int       `json:"price,omitempty"`
-	Status      string     `json:"status"`
-	StartTime   *time.Time `json:"start_time,omitempty"`
-	EndTime     *time.Time `json:"end_time,omitempty"`
+	Id          string                       `json:"id"`
+	UserId      string                       `json:"user_id"`
+	UserName    string                       `json:"username"`
+	ProjectName *string                      `json:"project_name,omitempty"`
+	Description *string                      `json:"description,omitempty"`
+	Price       *int                         `json:"price,omitempty"`
+	Status      string                       `json:"status"`
+	StartTime   *time.Time                   `json:"start_time,omitempty"`
+	EndTime     *time.Time                   `json:"end_time,omitempty"`
+	Payment     []paymentdto.PaymentResponse `json:"payment"`
 }
 
 func (project *ProjectResponse) MapFromProjectQuery(query ProjectQuery) {
@@ -126,4 +129,15 @@ func (project *ProjectResponse) MapFromProjectQuery(query ProjectQuery) {
 	project.Price = &price
 	project.StartTime = query.StartTime
 	project.EndTime = query.EndTime
+
+	if len(query.Payments) > 0 {
+		payments := make([]paymentdto.PaymentResponse, len(query.Payments))
+		for i, paymentQuery := range query.Payments {
+			var payment paymentdto.PaymentResponse
+			payment.MapFromQuery(paymentQuery)
+			payments[i] = payment
+		}
+	} else {
+		project.Payment = make([]paymentdto.PaymentResponse, 0)
+	}
 }
