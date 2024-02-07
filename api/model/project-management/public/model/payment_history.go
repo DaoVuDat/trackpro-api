@@ -18,4 +18,5 @@ type PaymentHistory struct {
 	Amount    int32
 	CreatedAt time.Time
 	UpdatedAt time.Time
+	UserID    uuid.UUID
 }

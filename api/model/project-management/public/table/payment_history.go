@@ -22,6 +22,7 @@ type paymentHistoryTable struct {
 	Amount    postgres.ColumnInteger
 	CreatedAt postgres.ColumnTimestampz
 	UpdatedAt postgres.ColumnTimestampz
+	UserID    postgres.ColumnString
 
 	AllColumns     postgres.ColumnList
 	MutableColumns postgres.ColumnList
@@ -67,8 +68,9 @@ func newPaymentHistoryTableImpl(schemaName, tableName, alias string) paymentHist
 		AmountColumn    = postgres.IntegerColumn("amount")
 		CreatedAtColumn = postgres.TimestampzColumn("created_at")
 		UpdatedAtColumn = postgres.TimestampzColumn("updated_at")
-		allColumns      = postgres.ColumnList{IDColumn, ProjectIDColumn, AmountColumn, CreatedAtColumn, UpdatedAtColumn}
-		mutableColumns  = postgres.ColumnList{ProjectIDColumn, AmountColumn, CreatedAtColumn, UpdatedAtColumn}
+		UserIDColumn    = postgres.StringColumn("user_id")
+		allColumns      = postgres.ColumnList{IDColumn, ProjectIDColumn, AmountColumn, CreatedAtColumn, UpdatedAtColumn, UserIDColumn}
+		mutableColumns  = postgres.ColumnList{ProjectIDColumn, AmountColumn, CreatedAtColumn, UpdatedAtColumn, UserIDColumn}
 	)
 
 	return paymentHistoryTable{
@@ -80,6 +82,7 @@ func newPaymentHistoryTableImpl(schemaName, tableName, alias string) paymentHist
 		Amount:    AmountColumn,
 		CreatedAt: CreatedAtColumn,
 		UpdatedAt: UpdatedAtColumn,
+		UserID:    UserIDColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

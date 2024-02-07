@@ -16,10 +16,6 @@ goose-down:
 goose-up-one:
 	goose -dir=migration postgres ${DB_DSN} up-by-one
 
-.PHONY: goose-down-one
-goose-down-one:
-	goose -dir=migration postgres ${DB_DSN} down-by-one
-
 .PHONY: goose-status
 goose-status:
 	goose -dir=migration postgres ${DB_DSN} status
