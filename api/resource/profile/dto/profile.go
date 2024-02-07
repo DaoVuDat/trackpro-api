@@ -2,10 +2,10 @@ package profiledto
 
 import (
 	"errors"
+	"github.com/DaoVuDat/trackpro-api/util/regex"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/google/uuid"
 	"gopkg.in/guregu/null.v4"
-	"regexp"
 )
 
 type ProfileCreate struct {
@@ -54,15 +54,11 @@ func (profileUpdate ProfileUpdate) Validate() error {
 				validation.By(func(value interface{}) error {
 					v := value.(null.String)
 
-					if ok, err := regexp.Match(
-						`(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?\/[a-zA-Z0-9]{2,}|((https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?)|(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})?`,
-						[]byte(v.String)); !ok {
-						return errors.New("invalid pattern")
-					} else if err != nil {
-						return err
+					if regex.EmailRegex.MatchString(v.String) {
+						return nil
 					}
 
-					return nil
+					return errors.New("invalid pattern")
 				}),
 			),
 		),
