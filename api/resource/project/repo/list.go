@@ -9,13 +9,34 @@ import (
 )
 
 type ListProjectRepo interface {
-	List(app *ctx.Application, userId uuid.UUID) ([]projectdto.ProjectQuery, error)
+	List(app *ctx.Application, userId uuid.UUID, returnPayment bool) ([]projectdto.ProjectQuery, error)
 }
 
-func (store *postgresStore) List(app *ctx.Application, userId uuid.UUID) ([]projectdto.ProjectQuery, error) {
-	stmt := SELECT(Project.AllColumns.Except(Project.CreatedAt, Project.UpdatedAt), Account.Username).
-		FROM(Project.INNER_JOIN(Account, Account.ID.EQ(Project.UserID))).
-		WHERE(Project.UserID.EQ(UUID(userId)))
+func (store *postgresStore) List(app *ctx.Application, userId uuid.UUID, returnPayment bool) ([]projectdto.ProjectQuery, error) {
+	var selectColumns ProjectionList
+	selectColumns = ProjectionList{
+		Project.AllColumns.Except(Project.CreatedAt, Project.UpdatedAt),
+		Account.Username,
+	}
+
+	var fromStatement ReadableTable
+	fromStatement = Project.INNER_JOIN(Account, Account.ID.EQ(Project.UserID))
+
+	whereStatement := Bool(true)
+	whereStatement = whereStatement.AND(Project.UserID.EQ(UUID(userId)))
+
+	if returnPayment {
+		selectColumns = ProjectionList{
+			Project.AllColumns.Except(Project.CreatedAt, Project.UpdatedAt),
+			Account.Username,
+			PaymentHistory.ID, PaymentHistory.Amount, PaymentHistory.CreatedAt,
+		}
+		fromStatement = fromStatement.LEFT_JOIN(PaymentHistory, Project.ID.EQ(PaymentHistory.ProjectID))
+	}
+
+	stmt := SELECT(selectColumns).
+		FROM(fromStatement).
+		WHERE(whereStatement)
 
 	var projects []projectdto.ProjectQuery
 

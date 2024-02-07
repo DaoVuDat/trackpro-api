@@ -7,6 +7,7 @@ import (
 	"github.com/DaoVuDat/trackpro-api/util/ctx"
 	"github.com/google/uuid"
 	"net/http"
+	"strconv"
 )
 
 func ListProject(app *ctx.Application) http.HandlerFunc {
@@ -19,10 +20,17 @@ func ListProject(app *ctx.Application) http.HandlerFunc {
 			return
 		}
 
+		payment := false
+		paymentString := req.URL.Query().Get("returnPayment")
+
+		if parsedPayment, err := strconv.ParseBool(paymentString); err == nil {
+			payment = parsedPayment
+		}
+
 		listProjectRepo := projectrepo.NewPostgresStore(app.Db)
 		listProjectService := projectservice.NewListProjectService(listProjectRepo)
 
-		projects, err := listProjectService.List(app, userId)
+		projects, err := listProjectService.List(app, userId, payment)
 		if err != nil {
 			app.Render.JSON(w, http.StatusInternalServerError, common.InternalErrorResponse(err))
 			return

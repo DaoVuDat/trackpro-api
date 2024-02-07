@@ -34,7 +34,7 @@ func FindProject(app *ctx.Application) http.HandlerFunc {
 		}
 
 		payment := false
-		paymentString := req.URL.Query().Get("payment")
+		paymentString := req.URL.Query().Get("returnPayment")
 
 		if parsedPayment, err := strconv.ParseBool(paymentString); err == nil {
 			payment = parsedPayment

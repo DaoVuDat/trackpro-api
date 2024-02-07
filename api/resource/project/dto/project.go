@@ -115,7 +115,7 @@ type ProjectResponse struct {
 	Status      string                       `json:"status"`
 	StartTime   *time.Time                   `json:"start_time,omitempty"`
 	EndTime     *time.Time                   `json:"end_time,omitempty"`
-	Payment     []paymentdto.PaymentResponse `json:"payment,omitempty"`
+	Payment     []paymentdto.PaymentResponse `json:"payment"`
 }
 
 func (project *ProjectResponse) MapFromProjectQuery(query ProjectQuery) {
