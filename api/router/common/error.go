@@ -12,11 +12,15 @@ type ErrorResponse struct {
 }
 
 var (
-	QueryNoResultErr = errors.New("no record")
-	FailUpdateError  = errors.New("update failure")
-	FailCreateError  = errors.New("create failure")
-	FailDeleteError  = errors.New("delete failure")
-	UUIDBadRequest   = errors.New("invalid uuid")
+	QueryNoResultErr                      = errors.New("no record")
+	FailUpdateError                       = errors.New("update failure")
+	FailCreateError                       = errors.New("create failure")
+	FailDeleteError                       = errors.New("delete failure")
+	DuplicateValueError                   = errors.New("duplicate value")
+	UUIDBadRequest                        = errors.New("invalid uuid")
+	CPassAndPassNotMatch                  = errors.New("password and confirmed password must be the same")
+	TokenExpired                          = errors.New("expired token")
+	OldAccessTokenAndRefreshTokenNotMatch = errors.New("expired access token and refresh token to request new access token not match")
 )
 
 func BadRequestResponse(err error) ErrorResponse {
@@ -57,6 +61,20 @@ func NotFoundErrorResponse(err error) ErrorResponse {
 	return ErrorResponse{
 		Status:  http.StatusNotFound,
 		Error:   "Not Found",
+		Message: msgErr,
+	}
+}
+
+func UnauthorizedErrorResponse(err error) ErrorResponse {
+	msgErr := "unauthorized request"
+
+	if err != nil {
+		msgErr = err.Error()
+	}
+
+	return ErrorResponse{
+		Status:  http.StatusUnauthorized,
+		Error:   "Unauthorized Request",
 		Message: msgErr,
 	}
 }

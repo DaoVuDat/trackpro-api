@@ -1,9 +1,9 @@
 package authdto
 
 import (
+	"errors"
 	"github.com/DaoVuDat/trackpro-api/util/regex"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"gopkg.in/errgo.v2/errors"
 )
 
 type AuthSignUp struct {
@@ -26,7 +26,7 @@ func (authSignUp AuthSignUp) Validate() error {
 			validation.Required,
 			validation.By(func(value interface{}) error {
 				v := value.(string)
-				if regex.PasswordRegex.MatchString(v) {
+				if regex.CheckPassword(v) {
 					return nil
 				}
 				return errors.New("invalid password")
@@ -35,16 +35,12 @@ func (authSignUp AuthSignUp) Validate() error {
 			validation.Required,
 			validation.By(func(value interface{}) error {
 				v := value.(string)
-				if regex.PasswordRegex.MatchString(v) {
+				if regex.CheckPassword(v) {
 					return nil
 				}
 				return errors.New("invalid confirmed password")
 			})),
 	)
-}
-
-type AuthLoginTemp struct {
-	Token string `json:"token"`
 }
 
 type AuthLogin struct {
@@ -62,10 +58,15 @@ func (authLogin AuthLogin) Validate() error {
 			validation.Required,
 			validation.By(func(value interface{}) error {
 				v := value.(string)
-				if regex.PasswordRegex.MatchString(v) {
+				if regex.CheckPassword(v) {
 					return nil
 				}
 				return errors.New("invalid password")
 			})),
 	)
+}
+
+type AuthResponse struct {
+	AccessToken string `json:"access_token"`
+	Role        string `json:"role"`
 }

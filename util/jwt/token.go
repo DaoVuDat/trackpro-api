@@ -70,25 +70,24 @@ func CreateToken(logger *zerolog.Logger, userId string, role string, privateKey 
 	return tokenDetail, nil
 }
 
-func ParseToken(logger *zerolog.Logger, token string, publicKey string) (*TokenDetail, error) {
+func ParseToken(logger *zerolog.Logger, token string, publicKey string, withValidate bool) (*TokenDetail, error) {
 	// Decode Public Key
 	decodePublicKey, err := base64.StdEncoding.DecodeString(publicKey)
 	if err != nil {
-		logger.Error().Err(fmt.Errorf(`failed to decode PublicKey: %s`, err.Error()))
+		logger.Error().Err(fmt.Errorf(`failed to decode PublicKey: %s`, err.Error())).Send()
 		return nil, err
 	}
 
 	realPubKey, _ := jwk.ParseKey(decodePublicKey, jwk.WithPEM(true))
 	if err != nil {
-		logger.Error().Err(fmt.Errorf(`failed to parse Key: %s`, err.Error()))
+		logger.Error().Err(fmt.Errorf(`failed to parse Key: %s`, err.Error())).Send()
 		return nil, err
 	}
 
 	// Parse token for claims
-	claims, err := jwt.Parse([]byte(token), jwt.WithKey(jwa.RS256, realPubKey), jwt.WithValidate(false))
+	claims, err := jwt.Parse([]byte(token), jwt.WithKey(jwa.RS256, realPubKey), jwt.WithValidate(withValidate))
 	if err != nil {
-		fmt.Printf("jwt.Parse failed: %s\n", err)
-		logger.Error().Err(fmt.Errorf(`failed to parse token to claims: %s`, err.Error()))
+		logger.Error().Err(fmt.Errorf(`failed to parse token to claims: %s`, err.Error())).Send()
 		return nil, err
 	}
 
@@ -122,6 +121,7 @@ func ParseToken(logger *zerolog.Logger, token string, publicKey string) (*TokenD
 	tokenDetail := &TokenDetail{
 		Role:   role,
 		UserId: userId,
+		Token:  &token,
 	}
 	return tokenDetail, nil
 }

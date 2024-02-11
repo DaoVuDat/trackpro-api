@@ -3,7 +3,7 @@ package router
 import (
 	accounthandler "github.com/DaoVuDat/trackpro-api/api/resource/account/handler"
 	authhandler "github.com/DaoVuDat/trackpro-api/api/resource/auth/handler"
-	healthcheck "github.com/DaoVuDat/trackpro-api/api/resource/healthcheck"
+	"github.com/DaoVuDat/trackpro-api/api/resource/healthcheck"
 	paymenthandler "github.com/DaoVuDat/trackpro-api/api/resource/payment/handler"
 	profilehandler "github.com/DaoVuDat/trackpro-api/api/resource/profile/handler"
 	projecthandler "github.com/DaoVuDat/trackpro-api/api/resource/project/handler"
@@ -23,21 +23,28 @@ func SetupRouter(app *ctx.Application) *chi.Mux {
 	// Setup Version 1 Routing
 	router.Route("/v1", func(g chi.Router) {
 		g.Get("/healthcheck", healthcheck.V1Handler(app))
-		g.Post("/signup", authhandler.SignUp(app))
-		g.Post("/login", authhandler.Login(app))
-
 		g.Group(func(g chi.Router) {
-			// Only Admin can create payment ( for now )
-			g.Post("/payment", paymenthandler.CreatePayment(app))
+			g.Use(middleware.AnonymousMiddleware(app, true))
+			g.Post("/signup", authhandler.SignUp(app))
+			g.Post("/login", authhandler.Login(app))
 		})
 
 		g.Group(func(g chi.Router) {
-			//g.Use(jwtauth.Verifier(app.JwtToken))
-			//g.Use(jwtauth.Authenticator(app.JwtToken))
+			g.Use(middleware.AuthenticatedMiddleware(app, false))
+			g.Post("/token/refresh", authhandler.Refresh(app))
+		})
+
+		g.Group(func(g chi.Router) {
+			g.Use(middleware.AuthenticatedMiddleware(app, true))
+
+			g.Group(func(g chi.Router) {
+				g.Use(middleware.IsAdminMiddleware(app))
+				g.Post("/payment", paymenthandler.CreatePayment(app))
+			})
 
 			g.Route("/account", func(g chi.Router) {
 				g.Group(func(g chi.Router) {
-					g.Use(middleware.IsAdminMiddleware(app.Logger))
+					g.Use(middleware.IsAdminMiddleware(app))
 					g.Get("/", accounthandler.ListAccount(app))
 				})
 				g.Get("/{id}", accounthandler.FindAccount(app))
@@ -51,10 +58,13 @@ func SetupRouter(app *ctx.Application) *chi.Mux {
 
 			g.Route("/project", func(g chi.Router) {
 				g.Get("/", projecthandler.ListProject(app))
-				g.Post("/", projecthandler.CreateProject(app))
 				g.Get("/{id}", projecthandler.FindProject(app))
 				g.Patch("/{id}", projecthandler.UpdateProject(app))
-				g.Delete("/{id}", projecthandler.DeleteProject(app))
+				g.Group(func(g chi.Router) {
+					g.Use(middleware.IsAdminMiddleware(app))
+					g.Post("/", projecthandler.CreateProject(app))
+					g.Delete("/{id}", projecthandler.DeleteProject(app))
+				})
 			})
 
 		})

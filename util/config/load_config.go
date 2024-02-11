@@ -20,12 +20,14 @@ type EnvConfigs struct {
 	AccessTokenPrivateKey string        `mapstructure:"ACCESS_TOKEN_PRIVATE_KEY"`
 	AccessTokenPublicKey  string        `mapstructure:"ACCESS_TOKEN_PUBLIC_KEY"`
 	AccessTokenExpiredIn  time.Duration `mapstructure:"ACCESS_TOKEN_EXPIRED_IN"`
-	//AccessTokenMaxAge     time.Duration `mapstructure:"ACCESS_TOKEN_MAXAGE"`
 
 	RefreshTokenPrivateKey string        `mapstructure:"REFRESH_TOKEN_PRIVATE_KEY"`
 	RefreshTokenPublicKey  string        `mapstructure:"REFRESH_TOKEN_PUBLIC_KEY"`
 	RefreshTokenExpiredIn  time.Duration `mapstructure:"REFRESH_TOKEN_EXPIRED_IN"`
-	//RefreshTokenMaxAge     time.Duration `mapstructure:"REFRESH_TOKEN_MAXAGE"`
+
+	RedisAddressAndPort string `mapstructure:"REDIS_ADDRESS_AND_PORT"`
+	RedisPassword       string `mapstructure:"REDIS_PASSWORD"`
+	RedisDB             int    `mapstructure:"REDIS_DB"`
 }
 
 func LoadEnvConfigs(logger *zerolog.Logger, path string) *EnvConfigs {

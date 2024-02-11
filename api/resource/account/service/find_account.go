@@ -22,7 +22,7 @@ func NewFindAccountService(findAccountRepo accountrepo.FindAccountRepo) FindAcco
 }
 
 func (service *findAccountService) Find(app *ctx.Application, accountId uuid.UUID) (*accountdto.AccountResponse, error) {
-	account, err := service.findAccountRepo.Find(app, accountId)
+	account, err := service.findAccountRepo.FindById(app, accountId)
 	if err != nil {
 		return nil, err
 	}

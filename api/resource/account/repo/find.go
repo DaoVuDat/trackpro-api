@@ -12,15 +12,36 @@ import (
 )
 
 type FindAccountRepo interface {
-	Find(app *ctx.Application, accountId uuid.UUID) (*model.Account, error)
+	FindById(app *ctx.Application, accountId uuid.UUID) (*model.Account, error)
+	FindByUserName(app *ctx.Application, username string) (*model.Account, error)
 }
 
-func (store *postgresStore) Find(app *ctx.Application, accountId uuid.UUID) (*model.Account, error) {
+func (store *postgresStore) FindById(app *ctx.Application, accountId uuid.UUID) (*model.Account, error) {
 
 	// query
 	stmt := SELECT(Account.AllColumns.Except(Account.CreatedAt, Account.UpdatedAt)).
 		FROM(Account).
 		WHERE(Account.ID.EQ(UUID(accountId))).LIMIT(1)
+
+	var account model.Account
+	err := stmt.Query(store.db, &account)
+	if err != nil {
+		app.Logger.Error().Err(err)
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, common.QueryNoResultErr
+		}
+
+		return nil, err
+	}
+
+	return &account, nil
+}
+
+func (store *postgresStore) FindByUserName(app *ctx.Application, username string) (*model.Account, error) {
+	// query
+	stmt := SELECT(Account.AllColumns.Except(Account.CreatedAt, Account.UpdatedAt)).
+		FROM(Account).
+		WHERE(Account.Username.EQ(String(username))).LIMIT(1)
 
 	var account model.Account
 	err := stmt.Query(store.db, &account)

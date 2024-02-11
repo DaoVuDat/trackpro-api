@@ -10,6 +10,7 @@ import (
 	"github.com/DaoVuDat/trackpro-api/api/router/common"
 	"github.com/DaoVuDat/trackpro-api/util/ctx"
 	"github.com/go-jet/jet/v2/qrm"
+	"strings"
 )
 
 type CreateAccountRepo interface {
@@ -51,10 +52,15 @@ func (store *postgresStore) CreateTX(app *ctx.Application, curCtx context.Contex
 
 	err := stmt.QueryContext(curCtx, tx, &dest)
 	if err != nil {
+		app.Logger.Error().Err(err).Send()
+
+		if strings.Contains(err.Error(), "(SQLSTATE 23505)") {
+			return nil, common.DuplicateValueError
+		}
+
 		if errors.Is(err, qrm.ErrNoRows) {
 			return nil, common.FailCreateError
 		}
-		app.Logger.Error().Err(err)
 		return nil, err
 	}
 

@@ -11,6 +11,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/ory/graceful"
+	"github.com/redis/go-redis/v9"
 	"github.com/unrolled/render"
 	"net/http"
 )
@@ -55,8 +56,13 @@ func main() {
 	renderer := render.New()
 	app.Render = renderer
 
-	// Temp
-	app.DataCache = map[string][]byte{}
+	// Setup Redis
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     app.Config.RedisAddressAndPort,
+		Password: app.Config.RedisPassword,
+		DB:       app.Config.RedisDB,
+	})
+	app.RedisClient = rdb
 
 	// Setup Route
 	r := router.SetupRouter(app)
