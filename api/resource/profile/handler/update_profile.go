@@ -3,11 +3,14 @@ package profilehandler
 import (
 	"encoding/json"
 	"errors"
+	"github.com/DaoVuDat/trackpro-api/api/model/project-management/public/model"
+	authconstant "github.com/DaoVuDat/trackpro-api/api/resource/auth/constant"
 	profiledto "github.com/DaoVuDat/trackpro-api/api/resource/profile/dto"
 	profilerepo "github.com/DaoVuDat/trackpro-api/api/resource/profile/repo"
 	profileservice "github.com/DaoVuDat/trackpro-api/api/resource/profile/service"
 	"github.com/DaoVuDat/trackpro-api/api/router/common"
 	"github.com/DaoVuDat/trackpro-api/util/ctx"
+	"github.com/DaoVuDat/trackpro-api/util/jwt"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"net/http"
@@ -22,6 +25,14 @@ func UpdateProfile(app *ctx.Application) http.HandlerFunc {
 			app.Render.JSON(w, http.StatusBadRequest, common.BadRequestResponse(err))
 			return
 		}
+
+		// Get profile from access token
+		accessTokenDetail := req.Context().Value(authconstant.AccessTokenContextHeader).(*jwt.TokenDetail)
+		if accessTokenDetail.Role == model.AccountType_Client.String() && accessTokenDetail.UserId != accountId.String() {
+			app.Render.JSON(w, http.StatusUnauthorized, common.UnauthorizedErrorResponse(nil))
+			return
+		}
+
 		var profileUpdate profiledto.ProfileUpdate
 		err = json.NewDecoder(req.Body).Decode(&profileUpdate)
 		if err != nil {
@@ -31,7 +42,6 @@ func UpdateProfile(app *ctx.Application) http.HandlerFunc {
 		}
 
 		// validate request body
-
 		if err = profileUpdate.Validate(); err != nil {
 			app.Logger.Error().Err(err)
 			app.Render.JSON(w, http.StatusBadRequest, common.BadRequestResponse(err))

@@ -8,7 +8,8 @@ import (
 )
 
 type ListProjectService interface {
-	List(app *ctx.Application, userId uuid.UUID, returnPayment bool) ([]projectdto.ProjectResponse, error)
+	List(app *ctx.Application, userId uuid.UUID, onlyUID bool, returnPayment bool) ([]projectdto.ProjectResponse, error)
+	ListByUID(app *ctx.Application, userId uuid.UUID, returnPayment bool) ([]projectdto.ProjectResponse, error)
 }
 
 type listProjectService struct {
@@ -21,8 +22,24 @@ func NewListProjectService(listProjectRepo projectrepo.ListProjectRepo) ListProj
 	}
 }
 
-func (service *listProjectService) List(app *ctx.Application, userId uuid.UUID, returnPayment bool) ([]projectdto.ProjectResponse, error) {
-	projects, err := service.listProjectRepo.List(app, userId, returnPayment)
+func (service *listProjectService) List(app *ctx.Application, userId uuid.UUID, onlyUID bool, returnPayment bool) ([]projectdto.ProjectResponse, error) {
+	projects, err := service.listProjectRepo.List(app, userId, onlyUID, returnPayment)
+	if err != nil {
+		return nil, err
+	}
+
+	projectsResponse := make([]projectdto.ProjectResponse, len(projects))
+	for i, project := range projects {
+		var projectResponse projectdto.ProjectResponse
+		projectResponse.MapFromProjectQuery(project)
+		projectsResponse[i] = projectResponse
+	}
+
+	return projectsResponse, nil
+}
+
+func (service *listProjectService) ListByUID(app *ctx.Application, userId uuid.UUID, returnPayment bool) ([]projectdto.ProjectResponse, error) {
+	projects, err := service.listProjectRepo.ListByUID(app, userId, returnPayment)
 	if err != nil {
 		return nil, err
 	}

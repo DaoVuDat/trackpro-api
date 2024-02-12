@@ -7,6 +7,7 @@ import (
 	passwordrepo "github.com/DaoVuDat/trackpro-api/api/resource/password/repo"
 	"github.com/DaoVuDat/trackpro-api/util/ctx"
 	"github.com/DaoVuDat/trackpro-api/util/password"
+	"strings"
 )
 
 type LoginService interface {
@@ -36,7 +37,7 @@ func (service *loginService) Login(app *ctx.Application, curCtx context.Context,
 	err error,
 ) {
 	// find account
-	account, err := service.findAccountRepo.FindByUserName(app, authLogin.UserName)
+	account, err := service.findAccountRepo.FindByUserName(app, strings.ToLower(authLogin.UserName))
 	if err != nil {
 		return "", "", "", err
 	}

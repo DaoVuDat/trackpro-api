@@ -13,6 +13,7 @@ import (
 	"github.com/DaoVuDat/trackpro-api/api/router/common"
 	"github.com/DaoVuDat/trackpro-api/util/ctx"
 	"github.com/DaoVuDat/trackpro-api/util/password"
+	"strings"
 )
 
 type SignUpService interface {
@@ -58,7 +59,7 @@ func (service *signupService) SignUp(app *ctx.Application, authSignUp authdto.Au
 
 	// Create Account
 	accountCreate := accountdto.AccountCreate{
-		UserName: authSignUp.UserName,
+		UserName: strings.ToLower(authSignUp.UserName),
 	}
 
 	account, err := service.accountCreateRepo.CreateTX(app, curCtx, tx, accountCreate)

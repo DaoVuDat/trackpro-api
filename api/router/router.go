@@ -43,12 +43,10 @@ func SetupRouter(app *ctx.Application) *chi.Mux {
 			})
 
 			g.Route("/account", func(g chi.Router) {
-				g.Group(func(g chi.Router) {
-					g.Use(middleware.IsAdminMiddleware(app))
-					g.Get("/", accounthandler.ListAccount(app))
-				})
-				g.Get("/{id}", accounthandler.FindAccount(app))
+				g.Use(middleware.IsAdminMiddleware(app))
+				g.Get("/", accounthandler.ListAccount(app))
 				g.Patch("/{id}", accounthandler.UpdateAccount(app))
+				g.Get("/{id}", accounthandler.FindAccount(app))
 			})
 
 			g.Route("/profile", func(g chi.Router) {
