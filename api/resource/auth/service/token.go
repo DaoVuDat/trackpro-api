@@ -84,7 +84,7 @@ func (service *tokenService) GetToken(app *ctx.Application, curCtx context.Conte
 }
 
 func (service *tokenService) RevokeToken(app *ctx.Application, curCtx context.Context, revokeAll bool, tokenDetail authdto.TokenDetailForRedis) (bool, error) {
-	if revokeAll {
+	if !revokeAll {
 		key := fmt.Sprintf("%s:%s:%s", tokenDetail.UserId, tokenDetail.TokenType, tokenDetail.Token)
 
 		if err := service.redisClient.Del(curCtx, key).Err(); err != nil {
