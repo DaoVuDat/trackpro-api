@@ -12,11 +12,20 @@ import (
 	"github.com/DaoVuDat/trackpro-api/util/ctx"
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 	"net/http"
 )
 
 func SetupRouter(app *ctx.Application) *chi.Mux {
 	router := chi.NewRouter()
+	router.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:3000", "https://localhost:3000"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: true,
+		MaxAge:           300, // Maximum value not ignored by any of major browsers
+	}))
 	router.Use(chimiddleware.StripSlashes)
 	router.Use(middleware.LoggingMiddleware(app.Logger))
 
