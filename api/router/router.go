@@ -19,12 +19,13 @@ import (
 func SetupRouter(app *ctx.Application) *chi.Mux {
 	router := chi.NewRouter()
 	router.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000", "https://localhost:3000"},
+		AllowedOrigins:   []string{"http://localhost:5173", "https://localhost:5173"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},
 		AllowCredentials: true,
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
+
 	}))
 	router.Use(chimiddleware.StripSlashes)
 	router.Use(middleware.LoggingMiddleware(app.Logger))

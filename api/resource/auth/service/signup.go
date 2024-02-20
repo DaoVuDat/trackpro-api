@@ -17,7 +17,7 @@ import (
 )
 
 type SignUpService interface {
-	SignUp(app *ctx.Application, authSignUp authdto.AuthSignUp) (accessToken, refreshToken string, role string, err error)
+	SignUp(app *ctx.Application, authSignUp authdto.AuthSignUp) (accessToken, refreshToken, role, userId string, err error)
 }
 
 type signupService struct {
@@ -44,7 +44,7 @@ func NewSignUpService(
 	}
 }
 
-func (service *signupService) SignUp(app *ctx.Application, authSignUp authdto.AuthSignUp) (accessToken, refreshToken, role string, err error) {
+func (service *signupService) SignUp(app *ctx.Application, authSignUp authdto.AuthSignUp) (accessToken, refreshToken, role, userid string, err error) {
 
 	// create account
 	_ = &model.Account{}
@@ -53,7 +53,7 @@ func (service *signupService) SignUp(app *ctx.Application, authSignUp authdto.Au
 	// open transaction for creating account then profile
 	tx, err := app.Db.BeginTx(curCtx, nil)
 	if err != nil {
-		return "", "", "", err
+		return "", "", "", "", err
 	}
 	defer tx.Rollback()
 
@@ -65,13 +65,13 @@ func (service *signupService) SignUp(app *ctx.Application, authSignUp authdto.Au
 	account, err := service.accountCreateRepo.CreateTX(app, curCtx, tx, accountCreate)
 	if err != nil {
 		app.Logger.Error().Err(err)
-		return "", "", "", err
+		return "", "", "", "", err
 	}
 
 	// Create Password
 	hashedPassword, err := password.HashPassword(authSignUp.Password)
 	if err != nil {
-		return "", "", "", err
+		return "", "", "", "", err
 	}
 
 	passwordCreate := passworddto.PasswordCreate{
@@ -82,11 +82,11 @@ func (service *signupService) SignUp(app *ctx.Application, authSignUp authdto.Au
 	ok, err := service.createPasswordRepo.CreateTX(app, curCtx, tx, passwordCreate)
 
 	if err != nil {
-		return "", "", "", err
+		return "", "", "", "", err
 	}
 
 	if !ok {
-		return "", "", "", common.FailCreateError
+		return "", "", "", "", common.FailCreateError
 	}
 
 	// Create Profile
@@ -100,12 +100,12 @@ func (service *signupService) SignUp(app *ctx.Application, authSignUp authdto.Au
 
 	_, err = service.profileCreateRepo.CreateTX(app, curCtx, tx, profileCreate)
 	if err != nil {
-		return "", "", "", err
+		return "", "", "", "", err
 	}
 
 	err = tx.Commit()
 	if err != nil {
-		return "", "", "", err
+		return "", "", "", "", err
 	}
 
 	// Access Token
@@ -116,5 +116,5 @@ func (service *signupService) SignUp(app *ctx.Application, authSignUp authdto.Au
 
 	accessToken, refreshToken, role, err = service.tokenService.CreateAccessTokenAndRefreshToken(app, curCtx, privateClaims)
 
-	return accessToken, refreshToken, role, nil
+	return accessToken, refreshToken, role, account.ID.String(), nil
 }

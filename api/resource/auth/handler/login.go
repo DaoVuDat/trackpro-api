@@ -38,7 +38,7 @@ func Login(app *ctx.Application) http.HandlerFunc {
 			tokenService,
 		)
 
-		accessToken, refreshToken, role, err := logInService.Login(app, req.Context(), authLogin)
+		accessToken, refreshToken, role, uid, err := logInService.Login(app, req.Context(), authLogin)
 		if err != nil {
 			if errors.Is(err, common.QueryNoResultErr) {
 				app.Render.JSON(w, http.StatusBadRequest, common.BadRequestResponse(errors.New("invalid credentials")))
@@ -51,8 +51,9 @@ func Login(app *ctx.Application) http.HandlerFunc {
 		// refresh token cookie
 		cookie := http.Cookie{
 			Expires:  time.Now().Add(app.Config.RefreshTokenExpiredIn),
-			Secure:   false,
+			Secure:   true,
 			HttpOnly: true,
+			//Path:     "/",
 			Path:     "/v1/token/refresh",
 			SameSite: http.SameSiteLaxMode,
 			Name:     authconstant.RefreshTokenCookieHeader,
@@ -64,6 +65,7 @@ func Login(app *ctx.Application) http.HandlerFunc {
 		app.Render.JSON(w, http.StatusOK, authdto.AuthResponse{
 			AccessToken: accessToken,
 			Role:        role,
+			UserId:      uid,
 		})
 	}
 }

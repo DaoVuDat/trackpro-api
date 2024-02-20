@@ -18,7 +18,7 @@ func (authSignUp AuthSignUp) Validate() error {
 	return validation.ValidateStruct(&authSignUp,
 		validation.Field(&authSignUp.UserName,
 			validation.Required,
-			validation.Length(8, 20).Error("username must be large than 7 and less than 21 characters"),
+			validation.Length(8, 20).Error("username must be from 8 to 20 characters"),
 		),
 		validation.Field(&authSignUp.FirstName, validation.Required),
 		validation.Field(&authSignUp.LastName, validation.Required),
@@ -52,7 +52,7 @@ func (authLogin AuthLogin) Validate() error {
 	return validation.ValidateStruct(&authLogin,
 		validation.Field(&authLogin.UserName,
 			validation.Required,
-			validation.Length(8, 20).Error("username must be large than 7 and less than 21 characters"),
+			validation.Length(8, 20).Error("username must be from 8 to 20 characters"),
 		),
 		validation.Field(&authLogin.Password,
 			validation.Required,
@@ -69,4 +69,5 @@ func (authLogin AuthLogin) Validate() error {
 type AuthResponse struct {
 	AccessToken string `json:"access_token"`
 	Role        string `json:"role"`
+	UserId      string `json:"user_id"`
 }

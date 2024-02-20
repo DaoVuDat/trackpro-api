@@ -23,6 +23,8 @@ type profileTable struct {
 	ImageURL  postgres.ColumnString
 	CreatedAt postgres.ColumnTimestampz
 	UpdatedAt postgres.ColumnTimestampz
+	About     postgres.ColumnString
+	Phone     postgres.ColumnString
 
 	AllColumns     postgres.ColumnList
 	MutableColumns postgres.ColumnList
@@ -69,8 +71,10 @@ func newProfileTableImpl(schemaName, tableName, alias string) profileTable {
 		ImageURLColumn  = postgres.StringColumn("image_url")
 		CreatedAtColumn = postgres.TimestampzColumn("created_at")
 		UpdatedAtColumn = postgres.TimestampzColumn("updated_at")
-		allColumns      = postgres.ColumnList{UserIDColumn, FirstNameColumn, LastNameColumn, ImageURLColumn, CreatedAtColumn, UpdatedAtColumn}
-		mutableColumns  = postgres.ColumnList{UserIDColumn, FirstNameColumn, LastNameColumn, ImageURLColumn, CreatedAtColumn, UpdatedAtColumn}
+		AboutColumn     = postgres.StringColumn("about")
+		PhoneColumn     = postgres.StringColumn("phone")
+		allColumns      = postgres.ColumnList{UserIDColumn, FirstNameColumn, LastNameColumn, ImageURLColumn, CreatedAtColumn, UpdatedAtColumn, AboutColumn, PhoneColumn}
+		mutableColumns  = postgres.ColumnList{UserIDColumn, FirstNameColumn, LastNameColumn, ImageURLColumn, CreatedAtColumn, UpdatedAtColumn, AboutColumn, PhoneColumn}
 	)
 
 	return profileTable{
@@ -83,6 +87,8 @@ func newProfileTableImpl(schemaName, tableName, alias string) profileTable {
 		ImageURL:  ImageURLColumn,
 		CreatedAt: CreatedAtColumn,
 		UpdatedAt: UpdatedAtColumn,
+		About:     AboutColumn,
+		Phone:     PhoneColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

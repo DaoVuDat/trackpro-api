@@ -47,7 +47,7 @@ func SignUp(app *ctx.Application) http.HandlerFunc {
 			tokenService,
 		)
 
-		accessToken, refreshToken, role, err := signUpService.SignUp(app, authSignUp)
+		accessToken, refreshToken, role, uid, err := signUpService.SignUp(app, authSignUp)
 		if err != nil {
 			if errors.Is(err, common.FailCreateError) {
 				app.Logger.Error().Err(err).Send()
@@ -81,6 +81,7 @@ func SignUp(app *ctx.Application) http.HandlerFunc {
 		app.Render.JSON(w, http.StatusOK, authdto.AuthResponse{
 			AccessToken: accessToken,
 			Role:        role,
+			UserId:      uid,
 		})
 	}
 }

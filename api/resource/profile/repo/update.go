@@ -41,6 +41,16 @@ func (store *postgresStore) Update(app *ctx.Application, accountId uuid.UUID, up
 		profileToUpdate.ImageURL = &update.ImageUrl.String
 	}
 
+	if update.About.Valid {
+		fieldsToUpdate = append(fieldsToUpdate, Profile.About)
+		profileToUpdate.About = &update.About.String
+	}
+
+	if update.PhoneNumber.Valid {
+		fieldsToUpdate = append(fieldsToUpdate, Profile.Phone)
+		profileToUpdate.Phone = &update.PhoneNumber.String
+	}
+
 	stmt := Profile.UPDATE(fieldsToUpdate).
 		MODEL(profileToUpdate).
 		WHERE(Profile.UserID.EQ(UUID(accountId))).

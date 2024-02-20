@@ -27,12 +27,8 @@ func (service *updateProfileService) Update(app *ctx.Application, accountId uuid
 		return nil, err
 	}
 
-	profileResponse := profiledto.ProfileResponse{
-		UserId:    updatedProfile.UserID.String(),
-		FirstName: updatedProfile.FirstName,
-		LastName:  updatedProfile.LastName,
-		ImageUrl:  updatedProfile.ImageURL,
-	}
+	var profileResponse profiledto.ProfileResponse
+	profileResponse.MapFromQuery(*updatedProfile)
 
 	return &profileResponse, nil
 }

@@ -19,4 +19,6 @@ type Profile struct {
 	ImageURL  *string
 	CreatedAt time.Time
 	UpdatedAt time.Time
+	About     *string
+	Phone     *string
 }

@@ -11,7 +11,7 @@ import (
 )
 
 type LoginService interface {
-	Login(app *ctx.Application, curCtx context.Context, authLogin authdto.AuthLogin) (accessToken, refreshToken, role string, err error)
+	Login(app *ctx.Application, curCtx context.Context, authLogin authdto.AuthLogin) (accessToken, refreshToken, userId, role string, err error)
 }
 
 type loginService struct {
@@ -33,29 +33,29 @@ func NewLoginService(
 }
 
 func (service *loginService) Login(app *ctx.Application, curCtx context.Context, authLogin authdto.AuthLogin) (
-	accessToken, refreshToken, role string,
+	accessToken, refreshToken, role, userid string,
 	err error,
 ) {
 	// find account
 	account, err := service.findAccountRepo.FindByUserName(app, strings.ToLower(authLogin.UserName))
 	if err != nil {
-		return "", "", "", err
+		return "", "", "", "", err
 	}
 
 	// get password
 	pwd, err := service.findPasswordRepo.Find(app, account.ID)
 	if err != nil {
-		return "", "", "", err
+		return "", "", "", "", err
 	}
 
 	// compare password
 	valid, err := password.ComparedPassword(pwd, authLogin.Password)
 	if err != nil {
-		return "", "", "", err
+		return "", "", "", "", err
 	}
 
 	if !valid {
-		return "", "", "", err
+		return "", "", "", "", err
 	}
 
 	// generate pair token
@@ -64,7 +64,7 @@ func (service *loginService) Login(app *ctx.Application, curCtx context.Context,
 		Role:   account.Type.String(),
 	})
 	if err != nil {
-		return "", "", "", err
+		return "", "", "", "", err
 	}
-	return accessToken, refreshToken, role, nil
+	return accessToken, refreshToken, role, account.ID.String(), nil
 }

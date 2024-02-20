@@ -47,6 +47,7 @@ func AnonymousMiddleware(app *ctx.Application, withExpiredTokenValidation bool) 
 
 			app.Render.JSON(w, http.StatusOK, map[string]interface{}{
 				"access_token": accessToken,
+				"user_id":      tokenDetail.UserId,
 				"role":         tokenDetail.Role,
 			})
 		})
