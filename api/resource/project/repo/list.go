@@ -9,11 +9,11 @@ import (
 )
 
 type ListProjectRepo interface {
-	List(app *ctx.Application, UID uuid.UUID, onlyUID bool, returnPayment bool) ([]projectdto.ProjectQuery, error)
+	List(app *ctx.Application, UID uuid.UUID, withUid bool, returnPayment bool) ([]projectdto.ProjectQuery, error)
 	ListByUID(app *ctx.Application, userId uuid.UUID, returnPayment bool) ([]projectdto.ProjectQuery, error)
 }
 
-func (store *postgresStore) List(app *ctx.Application, UID uuid.UUID, onlyUID bool, returnPayment bool) ([]projectdto.ProjectQuery, error) {
+func (store *postgresStore) List(app *ctx.Application, UID uuid.UUID, withUid bool, returnPayment bool) ([]projectdto.ProjectQuery, error) {
 	var selectColumns ProjectionList
 	selectColumns = ProjectionList{
 		Project.AllColumns.Except(Project.CreatedAt, Project.UpdatedAt),
@@ -24,7 +24,7 @@ func (store *postgresStore) List(app *ctx.Application, UID uuid.UUID, onlyUID bo
 	fromStatement = Project.INNER_JOIN(Account, Account.ID.EQ(Project.UserID))
 
 	whereStatement := Bool(true)
-	if onlyUID {
+	if withUid {
 		whereStatement = whereStatement.AND(Project.UserID.EQ(UUID(UID)))
 	}
 

@@ -27,12 +27,8 @@ func (service *findProfileService) Find(app *ctx.Application, accountId uuid.UUI
 		return nil, err
 	}
 
-	profileResponse := &profiledto.ProfileResponse{
-		UserId:    profile.UserID.String(),
-		FirstName: profile.FirstName,
-		LastName:  profile.LastName,
-		ImageUrl:  profile.ImageURL,
-	}
+	var profileResponse profiledto.ProfileResponse
+	profileResponse.MapFromQuery(*profile)
 
-	return profileResponse, nil
+	return &profileResponse, nil
 }

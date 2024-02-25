@@ -57,7 +57,7 @@ func (profileUpdate ProfileUpdate) Validate() error {
 				validation.By(func(value interface{}) error {
 					v := value.(null.String)
 
-					if regex.EmailRegex.MatchString(v.String) {
+					if regex.UrlRegex.MatchString(v.String) {
 						return nil
 					}
 

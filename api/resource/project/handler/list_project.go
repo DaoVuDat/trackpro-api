@@ -17,11 +17,17 @@ import (
 func ListProject(app *ctx.Application) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 
-		onlyUidString := req.URL.Query().Get("onlyUid")
-
-		onlyUid := false
-		if onlyUiParsed, err := strconv.ParseBool(onlyUidString); err == nil {
-			onlyUid = onlyUiParsed
+		byUidString := req.URL.Query().Get("by_uid")
+		var byUid uuid.UUID
+		withUid := false
+		if len(byUidString) > 0 {
+			withUid = true
+			byUidParsed, err := uuid.Parse(byUidString)
+			if err != nil {
+				app.Render.JSON(w, http.StatusBadRequest, common.BadRequestResponse(err))
+				return
+			}
+			byUid = byUidParsed
 		}
 
 		// Get profile from access token
@@ -48,8 +54,8 @@ func ListProject(app *ctx.Application) http.HandlerFunc {
 
 		var projects []projectdto.ProjectResponse
 
-		if accessTokenDetail.Role != model.AccountType_Client.String() {
-			projects, err = listProjectService.List(app, uid, onlyUid, payment)
+		if accessTokenDetail.Role == model.AccountType_Admin.String() {
+			projects, err = listProjectService.List(app, byUid, withUid, payment)
 			if err != nil {
 				app.Render.JSON(w, http.StatusInternalServerError, common.InternalErrorResponse(err))
 				return

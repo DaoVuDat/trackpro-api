@@ -3,7 +3,6 @@ package profilehandler
 import (
 	"encoding/json"
 	"errors"
-	"github.com/DaoVuDat/trackpro-api/api/model/project-management/public/model"
 	authconstant "github.com/DaoVuDat/trackpro-api/api/resource/auth/constant"
 	profiledto "github.com/DaoVuDat/trackpro-api/api/resource/profile/dto"
 	profilerepo "github.com/DaoVuDat/trackpro-api/api/resource/profile/repo"
@@ -28,7 +27,7 @@ func UpdateProfile(app *ctx.Application) http.HandlerFunc {
 
 		// Get profile from access token
 		accessTokenDetail := req.Context().Value(authconstant.AccessTokenContextHeader).(*jwt.TokenDetail)
-		if accessTokenDetail.Role == model.AccountType_Client.String() && accessTokenDetail.UserId != accountId.String() {
+		if accessTokenDetail.UserId != accountId.String() {
 			app.Render.JSON(w, http.StatusUnauthorized, common.UnauthorizedErrorResponse(nil))
 			return
 		}

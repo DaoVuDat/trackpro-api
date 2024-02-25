@@ -64,6 +64,13 @@ func Refresh(app *ctx.Application) http.HandlerFunc {
 				// we maybe revoke all token of this user
 			}
 
+			if errors.Is(err, common.TokenExpired) {
+				app.Logger.Err(err).Send()
+				app.Render.JSON(w, http.StatusUnauthorized, common.UnauthorizedErrorResponse(err))
+				return
+			}
+
+			app.Logger.Err(err).Send()
 			app.Render.JSON(w, http.StatusInternalServerError, common.InternalErrorResponse(err))
 			return
 		}
@@ -84,6 +91,7 @@ func Refresh(app *ctx.Application) http.HandlerFunc {
 		app.Render.JSON(w, http.StatusOK, authdto.AuthResponse{
 			AccessToken: newAccessToken,
 			Role:        role,
+			UserId:      refreshTokenDetail.UserId,
 		})
 	}
 }

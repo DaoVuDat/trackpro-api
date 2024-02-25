@@ -8,7 +8,7 @@ import (
 )
 
 type ListProjectService interface {
-	List(app *ctx.Application, userId uuid.UUID, onlyUID bool, returnPayment bool) ([]projectdto.ProjectResponse, error)
+	List(app *ctx.Application, userId uuid.UUID, byUid bool, returnPayment bool) ([]projectdto.ProjectResponse, error)
 	ListByUID(app *ctx.Application, userId uuid.UUID, returnPayment bool) ([]projectdto.ProjectResponse, error)
 }
 
@@ -22,8 +22,8 @@ func NewListProjectService(listProjectRepo projectrepo.ListProjectRepo) ListProj
 	}
 }
 
-func (service *listProjectService) List(app *ctx.Application, userId uuid.UUID, onlyUID bool, returnPayment bool) ([]projectdto.ProjectResponse, error) {
-	projects, err := service.listProjectRepo.List(app, userId, onlyUID, returnPayment)
+func (service *listProjectService) List(app *ctx.Application, userId uuid.UUID, byUid bool, returnPayment bool) ([]projectdto.ProjectResponse, error) {
+	projects, err := service.listProjectRepo.List(app, userId, byUid, returnPayment)
 	if err != nil {
 		return nil, err
 	}
